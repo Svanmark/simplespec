@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
-import { join } from 'node:path';
+import { lstat, mkdir, mkdtemp, readFile, readlink, rm, writeFile } from 'node:fs/promises';
+import { isAbsolute, join } from 'node:path';
 import { tmpdir } from 'node:os';
 
 import Runtime from '../bin/runtimes/Runtime.ts';
@@ -119,10 +119,77 @@ test('global install copies framework base directories to .agents', async () => 
   await withTemporaryWorkingDirectory(async (temporaryWorkingDirectory) => {
     await runtime.install();
 
+    const sourceSkill = await readFile(new URL('../skills/spec:new/SKILL.md', import.meta.url), 'utf8');
     const copiedSkill = await readFile(
       join(temporaryWorkingDirectory, '.agents', 'skills', 'spec:new', 'SKILL.md'),
       'utf8',
     );
-    assert.equal(copiedSkill, '');
+    assert.equal(copiedSkill, sourceSkill);
+  });
+});
+
+test('kilocode install symlinks each .agents/skills entry into .kilocode/skills', async () => {
+  await loadRuntimes();
+  (Runtime as unknown as { globalInstallCompleted: boolean }).globalInstallCompleted = false;
+
+  const kilocodeRuntime = Runtime.getRuntime('kilocode');
+
+  await withTemporaryWorkingDirectory(async (temporaryWorkingDirectory) => {
+    await kilocodeRuntime.install();
+
+    const symlinkPath = join(temporaryWorkingDirectory, '.kilocode', 'skills', 'spec:new');
+    const symlinkStats = await lstat(symlinkPath);
+
+    assert.equal(symlinkStats.isSymbolicLink(), true);
+
+    const symlinkTarget = await readlink(symlinkPath);
+    assert.equal(isAbsolute(symlinkTarget), false);
+    assert.equal(symlinkTarget, join('..', '..', '.agents', 'skills', 'spec:new'));
+  });
+});
+
+test('runtime directory mappings support custom targets and same-name fallback', async () => {
+  class DirectoryMappingRuntime extends Runtime {
+    async install(): Promise<void> {
+      await super.install();
+
+      await this.symlinkAgentDirectoriesToRuntime('.mapping-runtime', [
+        { source: 'skills', target: 'instructions' },
+        { source: 'prompts' },
+      ]);
+    }
+  }
+
+  (Runtime as unknown as { globalInstallCompleted: boolean }).globalInstallCompleted = false;
+
+  const runtimeId = uniqueRuntimeId('directory-mapping-runtime');
+  Runtime.registerRuntime(runtimeId, 'Directory Mapping Runtime', '.mapping-runtime', DirectoryMappingRuntime);
+  const runtime = Runtime.getRuntime(runtimeId);
+
+  await withTemporaryWorkingDirectory(async (temporaryWorkingDirectory) => {
+    await mkdir(join(temporaryWorkingDirectory, '.agents', 'prompts', 'general'), { recursive: true });
+    await writeFile(
+      join(temporaryWorkingDirectory, '.agents', 'prompts', 'general', 'system.md'),
+      '# Prompt',
+      'utf8',
+    );
+
+    await runtime.install();
+
+    const customTargetSymlinkPath = join(temporaryWorkingDirectory, '.mapping-runtime', 'instructions', 'spec:new');
+    const customTargetSymlinkStats = await lstat(customTargetSymlinkPath);
+    assert.equal(customTargetSymlinkStats.isSymbolicLink(), true);
+
+    const customTargetSymlinkTarget = await readlink(customTargetSymlinkPath);
+    assert.equal(isAbsolute(customTargetSymlinkTarget), false);
+    assert.equal(customTargetSymlinkTarget, join('..', '..', '.agents', 'skills', 'spec:new'));
+
+    const fallbackTargetSymlinkPath = join(temporaryWorkingDirectory, '.mapping-runtime', 'prompts', 'general');
+    const fallbackTargetSymlinkStats = await lstat(fallbackTargetSymlinkPath);
+    assert.equal(fallbackTargetSymlinkStats.isSymbolicLink(), true);
+
+    const fallbackTargetSymlinkTarget = await readlink(fallbackTargetSymlinkPath);
+    assert.equal(isAbsolute(fallbackTargetSymlinkTarget), false);
+    assert.equal(fallbackTargetSymlinkTarget, join('..', '..', '.agents', 'prompts', 'general'));
   });
 });

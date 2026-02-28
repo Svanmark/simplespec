@@ -1,6 +1,10 @@
 import { access, cp, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  symlinkDirectoriesFromAgentsToRuntime,
+  type RuntimeDirectorySymlinkMapping,
+} from './symlinkDirectories.ts';
 
 const runtimes: Record<string, RuntimeInstance> = {};
 const registeredRuntimes: Record<string, RegisteredRuntime> = {};
@@ -86,6 +90,17 @@ class Runtime {
 
   uninstall(): void {
     // Shared uninstall behavior for all runtimes goes here.
+  }
+
+  protected async symlinkAgentSkillsToRuntime(runtimeDirectory: string): Promise<void> {
+    await this.symlinkAgentDirectoriesToRuntime(runtimeDirectory, [{ source: 'skills' }]);
+  }
+
+  protected async symlinkAgentDirectoriesToRuntime(
+    runtimeDirectory: string,
+    mappings: RuntimeDirectorySymlinkMapping[],
+  ): Promise<void> {
+    await symlinkDirectoriesFromAgentsToRuntime(runtimeDirectory, mappings);
   }
 
   static registerRuntime(
