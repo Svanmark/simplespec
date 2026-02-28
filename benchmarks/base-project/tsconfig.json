@@ -3,12 +3,13 @@
     "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "outDir": "dist",
-    "rootDir": ".",
     "strict": true,
-    "skipLibCheck": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "rewriteRelativeImportExtensions": true
+    "skipLibCheck": true,
+    "outDir": "dist"
   },
-  "include": ["bin/**/*.ts", "tests/**/*.ts", "benchmarks/**/*.ts"]
+  "include": ["src", "tests"]
 }
