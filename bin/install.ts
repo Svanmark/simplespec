@@ -61,7 +61,7 @@ async function askRuntime() {
 async function installRuntimes() {
   for (const runtime of context.runtimes) {
     const runtimeInstance = Runtime.getRuntime(runtime);
-    runtimeInstance.install();
+    await runtimeInstance.install();
   }
 }
 

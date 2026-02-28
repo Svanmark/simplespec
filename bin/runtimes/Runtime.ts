@@ -1,5 +1,57 @@
+import { access, cp, mkdir } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 const runtimes: Record<string, RuntimeInstance> = {};
 const registeredRuntimes: Record<string, RegisteredRuntime> = {};
+
+const FRAMEWORK_BASE_DIRECTORY_MAPPINGS: Array<{ source: string; target: string }> = [
+  {
+    source: 'skills',
+    target: 'skills',
+  },
+];
+
+async function pathExists(path: string): Promise<boolean> {
+  try {
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function resolveFrameworkBaseSourceDirectory(sourceDirectory: string): Promise<string> {
+  const runtimeFileDirectory = dirname(fileURLToPath(import.meta.url));
+  const sourceDirectoryCandidates = [
+    join(runtimeFileDirectory, '..', '..', sourceDirectory),
+    join(runtimeFileDirectory, '..', '..', '..', sourceDirectory),
+    join(process.cwd(), sourceDirectory),
+  ];
+
+  for (const sourceDirectoryCandidate of sourceDirectoryCandidates) {
+    if (await pathExists(sourceDirectoryCandidate)) {
+      return sourceDirectoryCandidate;
+    }
+  }
+
+  throw new Error(`Unable to resolve framework base source directory: ${sourceDirectory}`);
+}
+
+async function installFrameworkBaseDirectories(): Promise<void> {
+  const agentsDirectory = join(process.cwd(), '.agents');
+  await mkdir(agentsDirectory, { recursive: true });
+
+  for (const { source, target } of FRAMEWORK_BASE_DIRECTORY_MAPPINGS) {
+    const sourceDirectory = await resolveFrameworkBaseSourceDirectory(source);
+    const targetDirectory = join(agentsDirectory, target);
+
+    await cp(sourceDirectory, targetDirectory, {
+      recursive: true,
+      force: true,
+    });
+  }
+}
 
 type RuntimeConstructor = new (runtime: string) => RuntimeInstance;
 type RegisteredRuntime = {
@@ -22,14 +74,14 @@ class Runtime {
     this.runtime = runtime;
   }
 
-  install(): void {
+  async install(): Promise<void> {
     if (Runtime.globalInstallCompleted) {
       return;
     }
 
-    Runtime.globalInstallCompleted = true;
     console.log('Installing global runtime...');
-    // Shared install behavior for all runtimes goes here.
+    await installFrameworkBaseDirectories();
+    Runtime.globalInstallCompleted = true;
   }
 
   uninstall(): void {

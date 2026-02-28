@@ -1,8 +1,8 @@
 import Runtime from './Runtime.ts';
 
 class Kilocode extends Runtime {
-  install(): void {
-    super.install();
+  async install(): Promise<void> {
+    await super.install();
 
     console.log('Installing Kilo Code runtime...')
 

@@ -1,8 +1,8 @@
 import Runtime from './Runtime.ts';
 
 class Codex extends Runtime {
-  install(): void {
-    super.install();
+  async install(): Promise<void> {
+    await super.install();
 
     // Codex runtime-specific install behavior goes here.
   }
