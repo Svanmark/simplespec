@@ -42,7 +42,7 @@ metadata:
 <!-- External systems, APIs, libraries, or other specs this depends on -->
 <!-- Example:
 - OAuth2 provider APIs (Google, GitHub)
-- User database schema (see spec: 2026-01-15-user-profile-schema.md)
+- User database schema (see spec: spec:12-user-profile-schema.md)
 - Redis for session storage
 -->
 
@@ -119,5 +119,4 @@ metadata:
 - Related discussion: https://github.com/org/repo/issues/123
 - Competitive analysis: see attached document
 -->
-
 

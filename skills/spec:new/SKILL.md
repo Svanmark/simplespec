@@ -15,7 +15,7 @@ A text describing the idea for the feature to implement. It can be:
 - Link(s) to relevant documents or resources. Link(s) to external project management tools like Jira or Confluence.
 
 ## Outputs
-A spec file created at `.simplespec/specs/<yyyy-mm-dd>-<slug>.md` based on spec-template.md
+A spec file created at `.simplespec/specs/spec:<number>-<slug>.md` based on spec-template.md
 
 ### Slug Generation Rules
 Generate the `<slug>` from the spec name using these rules:
@@ -69,14 +69,15 @@ Generate the `<slug>` from the spec name using these rules:
    - Append a numeric suffix to the slug (e.g., `-2`, `-3`)
    - Ask if this should update an existing spec
 
-8. **Save Spec File**: Create the spec file with proper frontmatter metadata:
-   - Use current date in YYYY-MM-DD format
+8. **Save Spec File**: Create the spec file with proper frontmatter metadata and naming:
+   - Set `created_date` to current date in YYYY-MM-DD format
    - Set `last_updated` to creation date
    - Generate slug per rules above
+   - Determine `<number>` by listing files in `.simplespec/specs/`, extracting existing `spec:<number>-*.md` prefixes, and using the next incremental number (start at `1` when none exist)
 
 ## Error Handling
 
-- **Inaccessible Links**: If external links can't be accessed, inform the user and proceed with available information or request alternatives
+- **Inaccessible Links**: If external links can't be accessed, inform the user and  ask if you shall proceed with available information or request alternatives
 - **Incomplete Input**: If critical information is missing and can't be inferred, ask specific questions rather than making assumptions
 - **Duplicate Detection**: Check for existing specs with same/similar slugs before saving
 - **Invalid Spec Name**: If the name can't generate a valid slug, ask for clarification

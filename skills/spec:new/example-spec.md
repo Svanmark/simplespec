@@ -55,6 +55,7 @@ This spec defines the implementation of OAuth2-based authentication for our appl
 - Redis for session storage and caching
 - Express.js middleware for request handling
 - Environment variables for OAuth client credentials (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET)
+- Related spec reference: `spec:12-user-profile-schema.md`
 
 ## Proposed Approach
 
