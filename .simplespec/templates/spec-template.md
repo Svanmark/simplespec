@@ -82,13 +82,20 @@ metadata:
 -->
 
 ## Acceptance Criteria
-<!-- Measurable, testable criteria that define "done". Use checkboxes. -->
-<!-- Example:
-- [ ] User can log in using Google OAuth2
-- [ ] User can log in using GitHub OAuth2
-- [ ] User session persists across browser restarts (remember me)
-- [ ] Failed authentication shows clear error message
-- [ ] All authentication events are logged for audit
+<!-- Write acceptance criteria in requirement/scenario format (OpenSpec style), not checkboxes. -->
+<!-- Use this structure:
+### Requirement: <capability statement>
+The system SHALL/MUST <clear, testable requirement sentence>.
+
+#### Scenario: <specific behavior>
+- **WHEN** <condition/event>
+- **THEN** <expected outcome>
+--->
+<!-- Guidance:
+- Each Requirement should represent one capability area.
+- Add multiple Scenarios per Requirement to cover happy path, error path, and boundary behavior.
+- Scenarios must be measurable and directly testable.
+- Prefer explicit terms such as SHALL/MUST and avoid vague wording.
 -->
 
 ## Implementation Tasks
@@ -119,4 +126,3 @@ metadata:
 - Related discussion: https://github.com/org/repo/issues/123
 - Competitive analysis: see attached document
 -->
-

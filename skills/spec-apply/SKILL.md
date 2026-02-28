@@ -53,8 +53,13 @@ Input can be either of:
    - Reconcile outputs into a single consistent implementation before validation.
 
 6. **Apply testing strategy**
-   - If tests exist in the repository, add/update tests to cover new behavior and relevant edge cases.
+   - If tests exist in the repository, add/update tests to cover all new behavior and relevant edge cases.
    - If the spec or user instruction requires tests, treat tests as mandatory deliverables.
+   - Map tests directly to acceptance criteria so each requirement is explicitly verified.
+   - Prefer small, focused tests with a single assertion intent (for example filtering, boundary behavior, sorting, validation) over one large mixed scenario.
+   - Include both happy path and failure-path coverage (invalid input, missing entities, boundary conditions).
+   - Keep tests deterministic (stable fixtures, explicit ordering assertions where ordering matters, no time/network randomness).
+   - When one broad test exists, split it into requirement-aligned tests to improve failure diagnosis and maintainability.
    - Run project-appropriate checks (for example test, typecheck, lint, build) and fix issues caused by the implementation.
 
 7. **Frontend verification (when applicable)**

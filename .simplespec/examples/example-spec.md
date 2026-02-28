@@ -126,20 +126,79 @@ We'll use Passport.js with `passport-google-oauth20` and `passport-github2` stra
 | Passport.js vulnerabilities | Medium | Low | Enable Dependabot alerts, update regularly, have fallback plan to option 2 |
 
 ## Acceptance Criteria
-- [ ] User can sign up with Google OAuth2 and create new account
-- [ ] User can sign up with GitHub OAuth2 and create new account
-- [ ] User can log in with Google if account already exists
-- [ ] User can log in with GitHub if account already exists
-- [ ] User profile (name, email, avatar) is populated from OAuth provider
-- [ ] User session persists across browser restarts
-- [ ] User can log out and session is properly terminated
-- [ ] Failed authentication displays user-friendly error message
-- [ ] Unauthorized access to protected routes redirects to login
-- [ ] All authentication events are logged with timestamp, user ID, and provider
-- [ ] OAuth flow completes in < 3 seconds (measured via performance monitoring)
-- [ ] Session expires after 30 days of inactivity
-- [ ] CSRF protection is active on all authentication endpoints
-- [ ] Integration tests cover happy path and error scenarios for both providers
+### Requirement: Users can authenticate with Google and GitHub OAuth2
+The system SHALL allow users to sign up and log in using Google and GitHub OAuth2 authorization code flows.
+
+#### Scenario: New user signs up via Google
+- **WHEN** a user completes Google OAuth2 and no local account exists for that identity
+- **THEN** a new account is created and the user is signed in
+
+#### Scenario: New user signs up via GitHub
+- **WHEN** a user completes GitHub OAuth2 and no local account exists for that identity
+- **THEN** a new account is created and the user is signed in
+
+#### Scenario: Existing user logs in via Google
+- **WHEN** a user completes Google OAuth2 and a matching account exists
+- **THEN** the user is signed in without creating a duplicate account
+
+#### Scenario: Existing user logs in via GitHub
+- **WHEN** a user completes GitHub OAuth2 and a matching account exists
+- **THEN** the user is signed in without creating a duplicate account
+
+### Requirement: OAuth profile data is stored on authentication
+The system SHALL persist required user profile attributes from OAuth providers for authenticated users.
+
+#### Scenario: Profile fields are captured from provider response
+- **WHEN** authentication succeeds
+- **THEN** the user's name, email, and avatar are stored/updated from provider data
+
+### Requirement: Session lifecycle is secure and user-controllable
+The system MUST maintain secure sessions, support logout, and enforce configured session expiration behavior.
+
+#### Scenario: Session persists across browser restarts
+- **WHEN** a user closes and reopens the browser within valid session lifetime
+- **THEN** the user remains authenticated
+
+#### Scenario: User logs out successfully
+- **WHEN** an authenticated user invokes logout
+- **THEN** the session is terminated and authentication cookies are cleared
+
+#### Scenario: Inactive session expires
+- **WHEN** no activity occurs for 30 days
+- **THEN** the session is no longer valid and re-authentication is required
+
+### Requirement: Authentication failures and unauthorized access are handled clearly
+The system SHALL provide explicit user feedback for authentication failures and protect restricted routes.
+
+#### Scenario: Failed authentication shows user-friendly message
+- **WHEN** OAuth authentication fails
+- **THEN** the user is shown a clear, actionable error message
+
+#### Scenario: Unauthorized user hits protected route
+- **WHEN** an unauthenticated request targets a protected endpoint
+- **THEN** the request is redirected to login
+
+### Requirement: Security and operational controls are enforced
+The system MUST log authentication events, enable CSRF protection on auth endpoints, and satisfy key performance targets.
+
+#### Scenario: Authentication events are auditable
+- **WHEN** authentication succeeds or fails
+- **THEN** an event is logged with timestamp, user identifier (when available), and provider
+
+#### Scenario: CSRF protection is active
+- **WHEN** authentication endpoints are invoked
+- **THEN** CSRF safeguards are enforced according to framework policy
+
+#### Scenario: OAuth flow performance target is met
+- **WHEN** OAuth authentication is measured in production-like conditions
+- **THEN** 95th percentile completion time is less than 3 seconds
+
+### Requirement: Test coverage validates critical auth flows
+The implementation MUST include integration tests for happy-path and error-path behavior across both OAuth providers.
+
+#### Scenario: Integration tests cover provider success and failure paths
+- **WHEN** the authentication test suite is executed
+- **THEN** both Google and GitHub flows are validated for successful and failure outcomes
 
 ## Implementation Tasks
 - [ ] Set up OAuth2 applications in Google Cloud Console and GitHub Developer Settings
