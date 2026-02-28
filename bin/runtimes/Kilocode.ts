@@ -1,4 +1,4 @@
-import Runtime from './Runtime.js';
+import Runtime from './Runtime.ts';
 
 class Kilocode extends Runtime {
   install(): void {

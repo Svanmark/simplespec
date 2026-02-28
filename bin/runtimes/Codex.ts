@@ -1,4 +1,4 @@
-import Runtime from './Runtime.js';
+import Runtime from './Runtime.ts';
 
 class Codex extends Runtime {
   install(): void {
