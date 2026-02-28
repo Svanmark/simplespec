@@ -25,4 +25,3 @@ for (const entry of entries) {
 
   await import(pathToFileURL(`${currentDir}/${entry.name}`).href);
 }
-

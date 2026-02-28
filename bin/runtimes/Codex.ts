@@ -1,13 +1,13 @@
 import Runtime from './Runtime.js';
 
 class Codex extends Runtime {
-  install() {
+  install(): void {
     super.install();
 
     // Codex runtime-specific install behavior goes here.
   }
 
-  uninstall() {
+  uninstall(): void {
     super.uninstall();
 
     // Codex runtime-specific uninstall behavior goes here.

@@ -1,13 +1,13 @@
 import Runtime from './Runtime.js';
 
 class Kilocode extends Runtime {
-  install() {
+  install(): void {
     super.install();
 
     // Kilocode runtime-specific install behavior goes here.
   }
 
-  uninstall() {
+  uninstall(): void {
     super.uninstall();
 
     // Kilocode runtime-specific uninstall behavior goes here.
