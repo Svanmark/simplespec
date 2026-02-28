@@ -14,5 +14,5 @@ class Codex extends Runtime {
   }
 }
 
-Runtime.registerRuntime('codex', Codex);
+Runtime.registerRuntime('codex', 'Codex', Codex);
 export default Codex;

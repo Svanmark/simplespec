@@ -4,6 +4,8 @@ class Kilocode extends Runtime {
   install(): void {
     super.install();
 
+    console.log('Installing Kilo Code runtime...')
+
     // Kilocode runtime-specific install behavior goes here.
   }
 
@@ -14,5 +16,5 @@ class Kilocode extends Runtime {
   }
 }
 
-Runtime.registerRuntime('kilocode', Kilocode);
+Runtime.registerRuntime('kilocode', 'Kilo Code', Kilocode);
 export default Kilocode;
