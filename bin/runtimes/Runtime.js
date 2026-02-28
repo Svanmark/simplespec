@@ -24,6 +24,10 @@ class Runtime {
     registeredRuntimes[runtime] = RuntimeClass;
   }
 
+  static listAvailableRuntimes() {
+    return Object.keys(registeredRuntimes);
+  }
+
   static getRuntime(runtime) {
     if (!runtimes[runtime]) {
       const RuntimeClass = registeredRuntimes[runtime];

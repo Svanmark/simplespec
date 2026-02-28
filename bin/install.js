@@ -1,3 +1,4 @@
-import runtime from './runtimes.js';
+import './runtimes/index.js';
+import Runtime from './runtimes/Runtime.js';
 
-console.log(`Available runtimes: ${Object.keys(runtime).join(', ')}`);
+console.log(`Available runtimes: ${Runtime.listAvailableRuntimes().join(', ')}`);
