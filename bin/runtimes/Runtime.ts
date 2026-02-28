@@ -1,5 +1,5 @@
 import { access, cp, mkdir } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   symlinkDirectoriesFromAgentsToRuntime,
@@ -21,7 +21,21 @@ const FRAMEWORK_BASE_DIRECTORY_MAPPINGS: Array<{ source: string; target: string 
 ];
 
 function getInstallationDirectory(): string {
-  return process.cwd();
+  const currentWorkingDirectory = process.cwd();
+  const initialWorkingDirectory = process.env.INIT_CWD?.trim();
+  const npmPackageJsonPath = process.env.npm_package_json;
+
+  if (!initialWorkingDirectory || !npmPackageJsonPath) {
+    return currentWorkingDirectory;
+  }
+
+  const npmScriptDirectory = dirname(npmPackageJsonPath);
+
+  if (resolve(currentWorkingDirectory) === resolve(npmScriptDirectory)) {
+    return initialWorkingDirectory;
+  }
+
+  return currentWorkingDirectory;
 }
 
 async function pathExists(path: string): Promise<boolean> {
@@ -57,6 +71,10 @@ async function installFrameworkBaseDirectories(): Promise<void> {
   for (const { source, target } of FRAMEWORK_BASE_DIRECTORY_MAPPINGS) {
     const sourceDirectory = await resolveFrameworkBaseSourceDirectory(source);
     const targetDirectory = join(installationDirectory, target);
+
+    if (resolve(sourceDirectory) === resolve(targetDirectory)) {
+      continue;
+    }
 
     await mkdir(dirname(targetDirectory), { recursive: true });
 

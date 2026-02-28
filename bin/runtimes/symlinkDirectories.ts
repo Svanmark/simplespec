@@ -1,5 +1,5 @@
 import { lstat, mkdir, readdir, rm, symlink } from 'node:fs/promises';
-import { isAbsolute, join, relative } from 'node:path';
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 
 type RuntimeDirectorySymlinkMapping = {
   source: string;
@@ -7,7 +7,21 @@ type RuntimeDirectorySymlinkMapping = {
 };
 
 function getInstallationDirectory(): string {
-  return process.cwd();
+  const currentWorkingDirectory = process.cwd();
+  const initialWorkingDirectory = process.env.INIT_CWD?.trim();
+  const npmPackageJsonPath = process.env.npm_package_json;
+
+  if (!initialWorkingDirectory || !npmPackageJsonPath) {
+    return currentWorkingDirectory;
+  }
+
+  const npmScriptDirectory = dirname(npmPackageJsonPath);
+
+  if (resolve(currentWorkingDirectory) === resolve(npmScriptDirectory)) {
+    return initialWorkingDirectory;
+  }
+
+  return currentWorkingDirectory;
 }
 
 async function symlinkDirectoriesFromAgentsToRuntime(

@@ -15,7 +15,7 @@ A text describing the idea for the feature to implement. It can be:
 - Link(s) to relevant documents or resources. Link(s) to external project management tools like Jira or Confluence.
 
 ## Outputs
-A spec file created at `.simplespec/specs/spec:<number>-<slug>.md` based on `.simplespec/spec-template.md`
+A spec file created at `.simplespec/specs/spec:<number>-<slug>.md` based on `.simplespec/templates/spec-template.md`. Theres an example spec available under `.simplespec/examples/example-spec.md`
 
 ### Slug Generation Rules
 Generate the `<slug>` from the spec name using these rules:
