@@ -75,6 +75,10 @@ Generate the `<slug>` from the spec name using these rules:
    - Generate slug per rules above
    - Determine `<number>` by listing files in `.simplespec/specs/`, extracting existing `spec:<number>-*.md` prefixes, and using the next incremental number (start at `1` when none exist)
 
+9. **Ask if user want to proceed to implementing the spec.**
+    - Ask the user if they want to proceed with implementing the spec, providing options to:
+    - Start implementation immediately, refer to the `spec-apply` skill.
+
 ## Error Handling
 
 - **Inaccessible Links**: If external links can't be accessed, inform the user and  ask if you shall proceed with available information or request alternatives
