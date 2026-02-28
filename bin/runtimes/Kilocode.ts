@@ -16,5 +16,10 @@ class Kilocode extends Runtime {
   }
 }
 
-Runtime.registerRuntime('kilocode', 'Kilo Code', Kilocode);
+Runtime.registerRuntime(
+  'kilocode',
+  'Kilo Code',
+  '.kilocode',
+  Kilocode
+);
 export default Kilocode;

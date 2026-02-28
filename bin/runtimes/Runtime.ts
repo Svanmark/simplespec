@@ -4,6 +4,7 @@ const registeredRuntimes: Record<string, RegisteredRuntime> = {};
 type RuntimeConstructor = new (runtime: string) => RuntimeInstance;
 type RegisteredRuntime = {
   name: string;
+  runtimePath: string;
   RuntimeClass: RuntimeConstructor;
 };
 
@@ -35,17 +36,24 @@ class Runtime {
     // Shared uninstall behavior for all runtimes goes here.
   }
 
-  static registerRuntime(runtime: string, name: string, RuntimeClass: RuntimeConstructor): void {
+  static registerRuntime(
+    runtime: string,
+    name: string,
+    runtimePath: string,
+    RuntimeClass: RuntimeConstructor,
+  ): void {
     registeredRuntimes[runtime] = {
       name,
+      runtimePath,
       RuntimeClass,
     };
   }
 
-  static listAvailableRuntimes(): Array<{ runtime: string; name: string }> {
-    return Object.entries(registeredRuntimes).map(([runtime, { name }]) => ({
+  static listAvailableRuntimes(): Array<{ runtime: string; name: string; runtimePath: string }> {
+    return Object.entries(registeredRuntimes).map(([runtime, { name, runtimePath }]) => ({
       runtime,
       name,
+      runtimePath,
     }));
   }
 
