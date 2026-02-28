@@ -6,6 +6,8 @@ type RuntimeDirectorySymlinkMapping = {
   target?: string;
 };
 
+const installationDirectory = process.env.INIT_CWD ?? process.cwd();
+
 async function symlinkDirectoriesFromAgentsToRuntime(
   runtimeDirectory: string,
   mappings: RuntimeDirectorySymlinkMapping[],
@@ -14,8 +16,8 @@ async function symlinkDirectoriesFromAgentsToRuntime(
     const sourceDirectoryName = mapping.source;
     const targetDirectoryName = mapping.target ?? mapping.source;
 
-    const sourceDirectory = join(process.cwd(), '.agents', sourceDirectoryName);
-    const targetDirectory = join(process.cwd(), runtimeDirectory, targetDirectoryName);
+    const sourceDirectory = join(installationDirectory, '.agents', sourceDirectoryName);
+    const targetDirectory = join(installationDirectory, runtimeDirectory, targetDirectoryName);
 
     await mkdir(targetDirectory, { recursive: true });
 

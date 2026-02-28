@@ -16,6 +16,8 @@ const FRAMEWORK_BASE_DIRECTORY_MAPPINGS: Array<{ source: string; target: string 
   },
 ];
 
+const installationDirectory = process.env.INIT_CWD ?? process.cwd();
+
 async function pathExists(path: string): Promise<boolean> {
   try {
     await access(path);
@@ -30,7 +32,7 @@ async function resolveFrameworkBaseSourceDirectory(sourceDirectory: string): Pro
   const sourceDirectoryCandidates = [
     join(runtimeFileDirectory, '..', '..', sourceDirectory),
     join(runtimeFileDirectory, '..', '..', '..', sourceDirectory),
-    join(process.cwd(), sourceDirectory),
+    join(installationDirectory, sourceDirectory),
   ];
 
   for (const sourceDirectoryCandidate of sourceDirectoryCandidates) {
@@ -43,7 +45,7 @@ async function resolveFrameworkBaseSourceDirectory(sourceDirectory: string): Pro
 }
 
 async function installFrameworkBaseDirectories(): Promise<void> {
-  const agentsDirectory = join(process.cwd(), '.agents');
+  const agentsDirectory = join(installationDirectory, '.agents');
   await mkdir(agentsDirectory, { recursive: true });
 
   for (const { source, target } of FRAMEWORK_BASE_DIRECTORY_MAPPINGS) {
