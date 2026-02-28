@@ -1,0 +1,20 @@
+{
+  "name": "simplespec",
+  "version": "0.0.1",
+  "description": "A simple spec-driven framework",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Svanmark/simplespec.git"
+  },
+  "author": "Kristoffer Svanmark",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Svanmark/simplespec/issues"
+  },
+  "homepage": "https://github.com/Svanmark/simplespec#readme"
+}
