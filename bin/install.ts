@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { loadRuntimes } from './runtimes/index.ts';
 import prompts from 'prompts';
 import chalk from 'chalk';
@@ -31,9 +33,23 @@ async function printAsciiLogo() {
 }
 
 async function printIntro() {
-  const packageJsonPath = new URL('../package.json', import.meta.url);
-  const packageJsonRaw = await readFile(packageJsonPath, 'utf8');
-  const { version } = JSON.parse(packageJsonRaw) as { version: string };
+  const packageJsonPathCandidates = [
+    new URL('../package.json', import.meta.url),
+    new URL('../../package.json', import.meta.url),
+    `${process.cwd()}/package.json`
+  ];
+
+  let version = 'unknown';
+
+  for (const pathCandidate of packageJsonPathCandidates) {
+    try {
+      const packageJsonRaw = await readFile(pathCandidate, 'utf8');
+      ({ version } = JSON.parse(packageJsonRaw) as { version: string });
+      break;
+    } catch {
+      // Try the next candidate path.
+    }
+  }
 
   console.log(`SimpleSpec ${chalk.gray(`v${version}`)}`);
   console.log(`A simple and lightwiehgt specification framework for AI agents.`)
