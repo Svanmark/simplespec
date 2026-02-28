@@ -1,6 +1,6 @@
 {
   "name": "simplespec",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A simple spec-driven framework",
   "type": "module",
   "main": "dist/bin/install.js",
