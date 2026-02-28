@@ -12,11 +12,17 @@ const registeredRuntimes: Record<string, RegisteredRuntime> = {};
 const FRAMEWORK_BASE_DIRECTORY_MAPPINGS: Array<{ source: string; target: string }> = [
   {
     source: 'skills',
-    target: 'skills',
+    target: '.agents/skills',
+  },
+  {
+    source: '.simplespec',
+    target: '.simplespec',
   },
 ];
 
-const installationDirectory = process.env.INIT_CWD ?? process.cwd();
+function getInstallationDirectory(): string {
+  return process.cwd();
+}
 
 async function pathExists(path: string): Promise<boolean> {
   try {
@@ -28,6 +34,7 @@ async function pathExists(path: string): Promise<boolean> {
 }
 
 async function resolveFrameworkBaseSourceDirectory(sourceDirectory: string): Promise<string> {
+  const installationDirectory = getInstallationDirectory();
   const runtimeFileDirectory = dirname(fileURLToPath(import.meta.url));
   const sourceDirectoryCandidates = [
     join(runtimeFileDirectory, '..', '..', sourceDirectory),
@@ -45,12 +52,13 @@ async function resolveFrameworkBaseSourceDirectory(sourceDirectory: string): Pro
 }
 
 async function installFrameworkBaseDirectories(): Promise<void> {
-  const agentsDirectory = join(installationDirectory, '.agents');
-  await mkdir(agentsDirectory, { recursive: true });
+  const installationDirectory = getInstallationDirectory();
 
   for (const { source, target } of FRAMEWORK_BASE_DIRECTORY_MAPPINGS) {
     const sourceDirectory = await resolveFrameworkBaseSourceDirectory(source);
-    const targetDirectory = join(agentsDirectory, target);
+    const targetDirectory = join(installationDirectory, target);
+
+    await mkdir(dirname(targetDirectory), { recursive: true });
 
     await cp(sourceDirectory, targetDirectory, {
       recursive: true,

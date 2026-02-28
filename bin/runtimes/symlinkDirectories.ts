@@ -6,13 +6,16 @@ type RuntimeDirectorySymlinkMapping = {
   target?: string;
 };
 
-const installationDirectory = process.env.INIT_CWD ?? process.cwd();
+function getInstallationDirectory(): string {
+  return process.cwd();
+}
 
 async function symlinkDirectoriesFromAgentsToRuntime(
   runtimeDirectory: string,
   mappings: RuntimeDirectorySymlinkMapping[],
 ): Promise<void> {
   for (const mapping of mappings) {
+    const installationDirectory = getInstallationDirectory();
     const sourceDirectoryName = mapping.source;
     const targetDirectoryName = mapping.target ?? mapping.source;
 

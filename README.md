@@ -40,7 +40,7 @@ Current flow:
 │       ├── Codex.ts
 │       └── Kilocode.ts
 ├── commands/
-│   └── spec:new.md
+│   └── spec-new.md
 ├── package.json
 └── tsconfig.json
 ```
@@ -83,7 +83,7 @@ npm run dev
 
 - Execute selected runtime installs after prompt
 - Implement concrete install/uninstall logic for each runtime
-- Add command specs under `commands/` (e.g., `spec:new`)
+- Add command specs under `commands/` (e.g., `spec-new`)
 - Add tests and CI checks
 - Expand documentation for usage and architecture
 

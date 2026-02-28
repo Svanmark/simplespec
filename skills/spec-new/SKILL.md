@@ -1,11 +1,11 @@
 ---
-name: spec:new
+name: spec-new
 description: Create a new product/engineering specification using our spec-driven development workflow. Use when asked to draft a new spec, define requirements, acceptance criteria, or produce a spec for a feature.
 metadata:
   version: "0.1"
 ---
 
-# /spec:new - Create a new simple spec
+# /spec-new - Create a new simple spec
 
 ## Inputs
 
@@ -15,7 +15,7 @@ A text describing the idea for the feature to implement. It can be:
 - Link(s) to relevant documents or resources. Link(s) to external project management tools like Jira or Confluence.
 
 ## Outputs
-A spec file created at `.simplespec/specs/spec:<number>-<slug>.md` based on spec-template.md
+A spec file created at `.simplespec/specs/spec:<number>-<slug>.md` based on `.simplespec/spec-template.md`
 
 ### Slug Generation Rules
 Generate the `<slug>` from the spec name using these rules:

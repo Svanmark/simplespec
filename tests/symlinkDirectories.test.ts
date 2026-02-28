@@ -22,18 +22,18 @@ async function withTemporaryWorkingDirectory(run: (temporaryWorkingDirectory: st
 
 test('symlink utility maps source to custom target and keeps symlink relative', async () => {
   await withTemporaryWorkingDirectory(async (temporaryWorkingDirectory) => {
-    await mkdir(join(temporaryWorkingDirectory, '.agents', 'skills', 'spec:new'), { recursive: true });
+    await mkdir(join(temporaryWorkingDirectory, '.agents', 'skills', 'spec-new'), { recursive: true });
 
     await symlinkDirectoriesFromAgentsToRuntime('.runtime', [{ source: 'skills', target: 'instructions' }]);
 
-    const symlinkPath = join(temporaryWorkingDirectory, '.runtime', 'instructions', 'spec:new');
+    const symlinkPath = join(temporaryWorkingDirectory, '.runtime', 'instructions', 'spec-new');
     const symlinkStats = await lstat(symlinkPath);
 
     assert.equal(symlinkStats.isSymbolicLink(), true);
 
     const symlinkTarget = await readlink(symlinkPath);
     assert.equal(isAbsolute(symlinkTarget), false);
-    assert.equal(symlinkTarget, join('..', '..', '.agents', 'skills', 'spec:new'));
+    assert.equal(symlinkTarget, join('..', '..', '.agents', 'skills', 'spec-new'));
   });
 });
 
