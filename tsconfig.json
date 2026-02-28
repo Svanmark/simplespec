@@ -10,5 +10,5 @@
     "forceConsistentCasingInFileNames": true,
     "rewriteRelativeImportExtensions": true
   },
-  "include": ["bin/**/*.ts"]
+  "include": ["bin/**/*.ts", "tests/**/*.ts"]
 }
