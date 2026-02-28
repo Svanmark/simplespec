@@ -4,6 +4,10 @@ class Codex extends Runtime {
   async install(): Promise<void> {
     await super.install();
 
+    console.log('Installing Codex runtime...')
+
+    await this.symlinkAgentDirectoriesToRuntime('.codex', [{ source: 'skills' }]);
+
     // Codex runtime-specific install behavior goes here.
   }
 

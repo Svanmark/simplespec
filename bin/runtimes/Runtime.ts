@@ -1,5 +1,5 @@
 import { access, cp, mkdir } from 'node:fs/promises';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   symlinkDirectoriesFromAgentsToRuntime,
@@ -77,6 +77,24 @@ async function installFrameworkBaseDirectories(): Promise<void> {
     }
 
     await mkdir(dirname(targetDirectory), { recursive: true });
+
+    if (source === '.simplespec') {
+      await cp(sourceDirectory, targetDirectory, {
+        recursive: true,
+        force: true,
+        filter: (sourcePath) => {
+          const sourceRelativePath = relative(sourceDirectory, sourcePath);
+
+          if (!sourceRelativePath) {
+            return true;
+          }
+
+          return sourceRelativePath !== 'specs' && !sourceRelativePath.startsWith(`specs${sep}`);
+        },
+      });
+
+      continue;
+    }
 
     await cp(sourceDirectory, targetDirectory, {
       recursive: true,

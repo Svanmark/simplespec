@@ -126,8 +126,11 @@ test('global install copies framework base directories to .agents', async () => 
     );
     assert.equal(copiedSkill, sourceSkill);
 
-    const sourceSimpleSpec = await readFile(new URL('../.simplespec/example-spec.md', import.meta.url), 'utf8');
-    const copiedSimpleSpec = await readFile(join(temporaryWorkingDirectory, '.simplespec', 'example-spec.md'), 'utf8');
+    const sourceSimpleSpec = await readFile(new URL('../.simplespec/examples/example-spec.md', import.meta.url), 'utf8');
+    const copiedSimpleSpec = await readFile(
+      join(temporaryWorkingDirectory, '.simplespec', 'examples', 'example-spec.md'),
+      'utf8',
+    );
     assert.equal(copiedSimpleSpec, sourceSimpleSpec);
   });
 });
@@ -149,6 +152,67 @@ test('kilocode install symlinks each .agents/skills entry into .kilocode/skills'
     const symlinkTarget = await readlink(symlinkPath);
     assert.equal(isAbsolute(symlinkTarget), false);
     assert.equal(symlinkTarget, join('..', '..', '.agents', 'skills', 'spec-new'));
+  });
+});
+
+test('codex install symlinks each .agents/skills entry into .codex/skills', async () => {
+  await loadRuntimes();
+  (Runtime as unknown as { globalInstallCompleted: boolean }).globalInstallCompleted = false;
+
+  const codexRuntime = Runtime.getRuntime('codex');
+
+  await withTemporaryWorkingDirectory(async (temporaryWorkingDirectory) => {
+    await codexRuntime.install();
+
+    const symlinkPath = join(temporaryWorkingDirectory, '.codex', 'skills', 'spec-new');
+    const symlinkStats = await lstat(symlinkPath);
+
+    assert.equal(symlinkStats.isSymbolicLink(), true);
+
+    const symlinkTarget = await readlink(symlinkPath);
+    assert.equal(isAbsolute(symlinkTarget), false);
+    assert.equal(symlinkTarget, join('..', '..', '.agents', 'skills', 'spec-new'));
+  });
+});
+
+test('global install refreshes .agents files and preserves existing .simplespec/specs', async () => {
+  class RefreshRuntime extends Runtime {
+    async install(): Promise<void> {
+      await super.install();
+    }
+  }
+
+  (Runtime as unknown as { globalInstallCompleted: boolean }).globalInstallCompleted = false;
+
+  const runtimeId = uniqueRuntimeId('refresh-runtime');
+  Runtime.registerRuntime(runtimeId, 'Refresh Runtime', '.refresh-runtime', RefreshRuntime);
+  const runtime = Runtime.getRuntime(runtimeId);
+
+  await withTemporaryWorkingDirectory(async (temporaryWorkingDirectory) => {
+    await mkdir(join(temporaryWorkingDirectory, '.agents', 'skills', 'spec-new'), { recursive: true });
+    await writeFile(
+      join(temporaryWorkingDirectory, '.agents', 'skills', 'spec-new', 'SKILL.md'),
+      'stale content',
+      'utf8',
+    );
+
+    await mkdir(join(temporaryWorkingDirectory, '.simplespec', 'specs'), { recursive: true });
+    await writeFile(join(temporaryWorkingDirectory, '.simplespec', 'specs', 'existing-spec.md'), 'keep me', 'utf8');
+
+    await runtime.install();
+
+    const sourceSkill = await readFile(new URL('../skills/spec-new/SKILL.md', import.meta.url), 'utf8');
+    const refreshedSkill = await readFile(
+      join(temporaryWorkingDirectory, '.agents', 'skills', 'spec-new', 'SKILL.md'),
+      'utf8',
+    );
+    assert.equal(refreshedSkill, sourceSkill);
+
+    const preservedSpec = await readFile(
+      join(temporaryWorkingDirectory, '.simplespec', 'specs', 'existing-spec.md'),
+      'utf8',
+    );
+    assert.equal(preservedSpec, 'keep me');
   });
 });
 
