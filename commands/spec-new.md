@@ -2,7 +2,7 @@
 name: spec-new
 description: Create a new product/engineering specification using our spec-driven development workflow. Use when asked to draft a new spec, define requirements, acceptance criteria, or produce a spec for a feature.
 metadata:
-  version: "0.1"
+  version: "0.2.1"
 ---
 
 # /spec-new - Create a new simple spec
@@ -13,6 +13,12 @@ A text describing the idea for the feature to implement. It can be:
 - A short description of the feature.
 - A longer, more detailed description capturing requirements and approaches.
 - Link(s) to relevant documents or resources. Link(s) to external project management tools like Jira or Confluence.
+
+If user inputs links, the agent should attempt to access them. If links are inaccessible:
+- Notify the user about the issue.
+- Search for a skill that can be installed to fetch the content (use `npx skills find [query]`).
+- Ask the user if they want to install the skill (`npx skills add <package>`) or provide alternative sources.
+- If user wants to install the skill, proceed with installation and then fetch the content.
 
 ## Outputs
 A spec file created at `.simplespec/specs/spec:<number>-<slug>.md` based on `.simplespec/templates/spec-template.md`. Theres an example spec available under `.simplespec/examples/example-spec.md`
