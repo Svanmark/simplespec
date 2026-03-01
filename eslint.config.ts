@@ -9,6 +9,7 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   {
     files: ['**/*.ts'],
+    ignores: ['eslint.config.ts'],
     languageOptions: {
       parserOptions: {
         project: './tsconfig.json',

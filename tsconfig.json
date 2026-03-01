@@ -10,5 +10,5 @@
     "forceConsistentCasingInFileNames": true,
     "rewriteRelativeImportExtensions": true
   },
-  "include": ["bin/**/*.ts", "tests/**/*.ts", "benchmarks/**/*.ts"]
+  "include": ["bin/**/*.ts", "tests/**/*.ts", "benchmarks/**/*.ts", "eslint.config.ts"]
 }
