@@ -6,7 +6,9 @@ class Kilocode extends Runtime {
 
     console.log('Installing Kilo Code runtime...')
 
-    await this.symlinkAgentDirectoriesToRuntime('.kilocode', [{ source: 'prompts', target: 'workflows' }]);
+    await this.symlinkAgentDirectoriesToRuntime('.kilocode', [
+      { source: 'prompts', target: 'workflows', linkMode: 'directory' },
+    ]);
 
     // Kilocode runtime-specific install behavior goes here.
   }

@@ -3,8 +3,9 @@ import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   symlinkDirectoriesFromAgentsToRuntime,
-  type RuntimeDirectorySymlinkMapping,
 } from './symlinkDirectories.ts';
+import { copyDirectoriesFromAgentsToRuntime } from './copyFiles.ts';
+import type { RuntimeDirectorySymlinkMapping } from './runtimeDirectoryMapping.ts';
 
 const runtimes: Record<string, RuntimeInstance> = {};
 const registeredRuntimes: Record<string, RegisteredRuntime> = {};
@@ -104,6 +105,7 @@ async function installFrameworkBaseDirectories(): Promise<void> {
 }
 
 type RuntimeConstructor = new (runtime: string) => RuntimeInstance;
+type RuntimeInstallMode = 'symlink' | 'copy';
 type RegisteredRuntime = {
   name: string;
   runtimePath: string;
@@ -115,6 +117,7 @@ type RuntimeInstance = Runtime;
 class Runtime {
   runtime: string;
   private static globalInstallCompleted = false;
+  private static installMode: RuntimeInstallMode = 'symlink';
 
   constructor(runtime: string) {
     if (new.target === Runtime) {
@@ -146,7 +149,16 @@ class Runtime {
     runtimeDirectory: string,
     mappings: RuntimeDirectorySymlinkMapping[],
   ): Promise<void> {
+    if (Runtime.installMode === 'copy') {
+      await copyDirectoriesFromAgentsToRuntime(runtimeDirectory, mappings);
+      return;
+    }
+
     await symlinkDirectoriesFromAgentsToRuntime(runtimeDirectory, mappings);
+  }
+
+  static configureInstallMode(mode: RuntimeInstallMode): void {
+    Runtime.installMode = mode;
   }
 
   static registerRuntime(

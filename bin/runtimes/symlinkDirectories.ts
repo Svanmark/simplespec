@@ -1,10 +1,7 @@
 import { lstat, mkdir, readdir, rm, symlink } from 'node:fs/promises';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 
-type RuntimeDirectorySymlinkMapping = {
-  source: string;
-  target?: string;
-};
+import type { RuntimeDirectorySymlinkMapping } from './runtimeDirectoryMapping.ts';
 
 function getInstallationDirectory(): string {
   const currentWorkingDirectory = process.cwd();
@@ -36,6 +33,26 @@ async function symlinkDirectoriesFromAgentsToRuntime(
     const sourceDirectory = join(installationDirectory, '.agents', sourceDirectoryName);
     const targetDirectory = join(installationDirectory, runtimeDirectory, targetDirectoryName);
 
+    if (mapping.linkMode === 'directory') {
+      await mkdir(dirname(targetDirectory), { recursive: true });
+
+      try {
+        await lstat(targetDirectory);
+        await rm(targetDirectory, { recursive: true, force: true });
+      } catch {
+        // Target does not exist yet.
+      }
+
+      const relativeSourceDirectoryPath = relative(dirname(targetDirectory), sourceDirectory);
+
+      if (isAbsolute(relativeSourceDirectoryPath)) {
+        throw new Error(`Expected relative symlink target, but got: ${relativeSourceDirectoryPath}`);
+      }
+
+      await symlink(relativeSourceDirectoryPath, targetDirectory, 'dir');
+      continue;
+    }
+
     await mkdir(targetDirectory, { recursive: true });
 
     const entries = await readdir(sourceDirectory, { withFileTypes: true });
@@ -63,5 +80,4 @@ async function symlinkDirectoriesFromAgentsToRuntime(
   }
 }
 
-export type { RuntimeDirectorySymlinkMapping };
 export { symlinkDirectoriesFromAgentsToRuntime };

@@ -24,6 +24,7 @@ async function withTemporaryWorkingDirectory(run: (temporaryWorkingDirectory: st
 test('codex install symlinks each .agents/prompts entry into .codex/prompts', async () => {
   await loadRuntimes();
   (Runtime as unknown as { globalInstallCompleted: boolean }).globalInstallCompleted = false;
+  Runtime.configureInstallMode('symlink');
 
   const codexRuntime = Runtime.getRuntime('codex');
 

@@ -70,3 +70,22 @@ test('symlink utility replaces existing target entries before relinking', async 
     assert.equal(symlinkTarget, join('..', '..', '.agents', 'prompts', 'general'));
   });
 });
+
+test('symlink utility supports directory-level symlink mode', async () => {
+  await withTemporaryWorkingDirectory(async (temporaryWorkingDirectory) => {
+    await mkdir(join(temporaryWorkingDirectory, '.agents', 'prompts', 'general'), { recursive: true });
+
+    await symlinkDirectoriesFromAgentsToRuntime('.runtime', [
+      { source: 'prompts', target: 'workflows', linkMode: 'directory' },
+    ]);
+
+    const symlinkPath = join(temporaryWorkingDirectory, '.runtime', 'workflows');
+    const symlinkStats = await lstat(symlinkPath);
+
+    assert.equal(symlinkStats.isSymbolicLink(), true);
+
+    const symlinkTarget = await readlink(symlinkPath);
+    assert.equal(isAbsolute(symlinkTarget), false);
+    assert.equal(symlinkTarget, join('..', '.agents', 'prompts'));
+  });
+});

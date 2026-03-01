@@ -9,7 +9,8 @@ import { readFile } from 'node:fs/promises';
 await loadRuntimes();
 
 const context = {
-  runtimes: []
+  runtimes: [],
+  installMode: 'symlink' as 'symlink' | 'copy',
 };
 
 async function printAsciiLogo() {
@@ -74,7 +75,30 @@ async function askRuntime() {
   return response;
 }
 
+async function askInstallMode() {
+  const response = await prompts({
+    type: 'select',
+    name: 'installMode',
+    message: 'How should runtime prompt directories be installed?',
+    choices: [
+      {
+        title: 'Symlink directories (recommended for new projects and projects without existing custom prompts/commands)',
+        value: 'symlink',
+      },
+      {
+        title: 'Copy files (recommended when isolated runtime prompts already exist or are needed)',
+        value: 'copy',
+      },
+    ],
+    initial: 0,
+  });
+
+  context.installMode = response.installMode;
+}
+
 async function installRuntimes() {
+  Runtime.configureInstallMode(context.installMode);
+
   for (const runtime of context.runtimes) {
     const runtimeInstance = Runtime.getRuntime(runtime);
     await runtimeInstance.install();
@@ -85,6 +109,7 @@ async function run() {
   await printAsciiLogo();
   await printIntro();
   await askRuntime();
+  await askInstallMode();
   await installRuntimes();
 }
 

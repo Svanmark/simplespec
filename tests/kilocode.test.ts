@@ -24,19 +24,20 @@ async function withTemporaryWorkingDirectory(run: (temporaryWorkingDirectory: st
 test('kilocode install symlinks each .agents/prompts entry into .kilocode/workflows', async () => {
   await loadRuntimes();
   (Runtime as unknown as { globalInstallCompleted: boolean }).globalInstallCompleted = false;
+  Runtime.configureInstallMode('symlink');
 
   const kilocodeRuntime = Runtime.getRuntime('kilocode');
 
   await withTemporaryWorkingDirectory(async (temporaryWorkingDirectory) => {
     await kilocodeRuntime.install();
 
-    const symlinkPath = join(temporaryWorkingDirectory, '.kilocode', 'workflows', 'spec-new.md');
+    const symlinkPath = join(temporaryWorkingDirectory, '.kilocode', 'workflows');
     const symlinkStats = await lstat(symlinkPath);
 
     assert.equal(symlinkStats.isSymbolicLink(), true);
 
     const symlinkTarget = await readlink(symlinkPath);
     assert.equal(isAbsolute(symlinkTarget), false);
-    assert.equal(symlinkTarget, join('..', '..', '.agents', 'prompts', 'spec-new.md'));
+    assert.equal(symlinkTarget, join('..', '.agents', 'prompts'));
   });
 });

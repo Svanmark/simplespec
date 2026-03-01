@@ -189,6 +189,7 @@ test('runtime directory mappings support custom targets and same-name fallback',
   }
 
   (Runtime as unknown as { globalInstallCompleted: boolean }).globalInstallCompleted = false;
+  Runtime.configureInstallMode('symlink');
 
   const runtimeId = uniqueRuntimeId('directory-mapping-runtime');
   Runtime.registerRuntime(runtimeId, 'Directory Mapping Runtime', '.mapping-runtime', DirectoryMappingRuntime);
