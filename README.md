@@ -7,6 +7,21 @@
   Turn rough ideas into clear specs your coding agent can actually execute.
 </p>
 
+<p align="center">
+  <a href="https://www.npmjs.com/package/simplespec">
+    <img src="https://img.shields.io/npm/v/simplespec?logo=npm" alt="npm version" />
+  </a>
+  <a href="https://www.npmjs.com/package/simplespec">
+    <img src="https://img.shields.io/npm/dm/simplespec?logo=npm" alt="npm downloads" />
+  </a>
+  <a href="https://github.com/Svanmark/simplespec/actions/workflows/ci.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/Svanmark/simplespec/ci.yml?branch=main&label=tests" alt="unit tests" />
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/github/license/Svanmark/simplespec" alt="license" />
+  </a>
+</p>
+
 ---
 
 ## Why SimpleSpec?
@@ -40,9 +55,14 @@ npx simplespec@latest
 
 That’s it. Follow the guided flow and start building with clearer direction.
 
+---
+
+## How to use
+
 ### Create a spec
 
-Use this command as your core workflow:
+Use this command as your core workflow. This will generate a structured feature specification based on your input.
+The agent will ask you for additional details when needed.
 
 **Create a new spec from an idea**
 ```text
@@ -51,6 +71,14 @@ Use this command as your core workflow:
 This generates a structured spec under `.simplespec/specs/` with clear requirements, acceptance criteria, and implementation tasks.
 
    > `/spec-new` will ask if you want to continue directly into implementation.
+   
+### Implement a spec
+
+Use this command to implement a spec. If the command is sent in the same context as the spec creation, you do not need to specify the spec ID. Otherwise, provide the ID of the spec you want to implement.
+
+```text
+/spec-apply spec:<id>
+```
 
 ---
 
