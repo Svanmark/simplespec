@@ -11,8 +11,8 @@ const registeredRuntimes: Record<string, RegisteredRuntime> = {};
 
 const FRAMEWORK_BASE_DIRECTORY_MAPPINGS: Array<{ source: string; target: string }> = [
   {
-    source: 'skills',
-    target: '.agents/skills',
+    source: 'commands',
+    target: '.agents/prompts',
   },
   {
     source: '.simplespec',
@@ -138,8 +138,8 @@ class Runtime {
     // Shared uninstall behavior for all runtimes goes here.
   }
 
-  protected async symlinkAgentSkillsToRuntime(runtimeDirectory: string): Promise<void> {
-    await this.symlinkAgentDirectoriesToRuntime(runtimeDirectory, [{ source: 'skills' }]);
+  protected async symlinkAgentPromptsToRuntime(runtimeDirectory: string): Promise<void> {
+    await this.symlinkAgentDirectoriesToRuntime(runtimeDirectory, [{ source: 'prompts' }]);
   }
 
   protected async symlinkAgentDirectoriesToRuntime(

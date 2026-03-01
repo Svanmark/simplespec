@@ -119,12 +119,12 @@ test('global install copies framework base directories to .agents', async () => 
   await withTemporaryWorkingDirectory(async (temporaryWorkingDirectory) => {
     await runtime.install();
 
-    const sourceSkill = await readFile(new URL('../skills/spec-new/SKILL.md', import.meta.url), 'utf8');
-    const copiedSkill = await readFile(
-      join(temporaryWorkingDirectory, '.agents', 'skills', 'spec-new', 'SKILL.md'),
+    const sourceCommand = await readFile(new URL('../commands/spec-new.md', import.meta.url), 'utf8');
+    const copiedCommand = await readFile(
+      join(temporaryWorkingDirectory, '.agents', 'prompts', 'spec-new.md'),
       'utf8',
     );
-    assert.equal(copiedSkill, sourceSkill);
+    assert.equal(copiedCommand, sourceCommand);
 
     const sourceSimpleSpec = await readFile(new URL('../.simplespec/examples/example-spec.md', import.meta.url), 'utf8');
     const copiedSimpleSpec = await readFile(
@@ -132,46 +132,6 @@ test('global install copies framework base directories to .agents', async () => 
       'utf8',
     );
     assert.equal(copiedSimpleSpec, sourceSimpleSpec);
-  });
-});
-
-test('kilocode install symlinks each .agents/skills entry into .kilocode/skills', async () => {
-  await loadRuntimes();
-  (Runtime as unknown as { globalInstallCompleted: boolean }).globalInstallCompleted = false;
-
-  const kilocodeRuntime = Runtime.getRuntime('kilocode');
-
-  await withTemporaryWorkingDirectory(async (temporaryWorkingDirectory) => {
-    await kilocodeRuntime.install();
-
-    const symlinkPath = join(temporaryWorkingDirectory, '.kilocode', 'skills', 'spec-new');
-    const symlinkStats = await lstat(symlinkPath);
-
-    assert.equal(symlinkStats.isSymbolicLink(), true);
-
-    const symlinkTarget = await readlink(symlinkPath);
-    assert.equal(isAbsolute(symlinkTarget), false);
-    assert.equal(symlinkTarget, join('..', '..', '.agents', 'skills', 'spec-new'));
-  });
-});
-
-test('codex install symlinks each .agents/skills entry into .codex/skills', async () => {
-  await loadRuntimes();
-  (Runtime as unknown as { globalInstallCompleted: boolean }).globalInstallCompleted = false;
-
-  const codexRuntime = Runtime.getRuntime('codex');
-
-  await withTemporaryWorkingDirectory(async (temporaryWorkingDirectory) => {
-    await codexRuntime.install();
-
-    const symlinkPath = join(temporaryWorkingDirectory, '.codex', 'skills', 'spec-new');
-    const symlinkStats = await lstat(symlinkPath);
-
-    assert.equal(symlinkStats.isSymbolicLink(), true);
-
-    const symlinkTarget = await readlink(symlinkPath);
-    assert.equal(isAbsolute(symlinkTarget), false);
-    assert.equal(symlinkTarget, join('..', '..', '.agents', 'skills', 'spec-new'));
   });
 });
 
@@ -189,9 +149,9 @@ test('global install refreshes .agents files and preserves existing .simplespec/
   const runtime = Runtime.getRuntime(runtimeId);
 
   await withTemporaryWorkingDirectory(async (temporaryWorkingDirectory) => {
-    await mkdir(join(temporaryWorkingDirectory, '.agents', 'skills', 'spec-new'), { recursive: true });
+    await mkdir(join(temporaryWorkingDirectory, '.agents', 'prompts'), { recursive: true });
     await writeFile(
-      join(temporaryWorkingDirectory, '.agents', 'skills', 'spec-new', 'SKILL.md'),
+      join(temporaryWorkingDirectory, '.agents', 'prompts', 'spec-new.md'),
       'stale content',
       'utf8',
     );
@@ -201,12 +161,12 @@ test('global install refreshes .agents files and preserves existing .simplespec/
 
     await runtime.install();
 
-    const sourceSkill = await readFile(new URL('../skills/spec-new/SKILL.md', import.meta.url), 'utf8');
-    const refreshedSkill = await readFile(
-      join(temporaryWorkingDirectory, '.agents', 'skills', 'spec-new', 'SKILL.md'),
+    const sourceCommand = await readFile(new URL('../commands/spec-new.md', import.meta.url), 'utf8');
+    const refreshedCommand = await readFile(
+      join(temporaryWorkingDirectory, '.agents', 'prompts', 'spec-new.md'),
       'utf8',
     );
-    assert.equal(refreshedSkill, sourceSkill);
+    assert.equal(refreshedCommand, sourceCommand);
 
     const preservedSpec = await readFile(
       join(temporaryWorkingDirectory, '.simplespec', 'specs', 'existing-spec.md'),
@@ -222,7 +182,7 @@ test('runtime directory mappings support custom targets and same-name fallback',
       await super.install();
 
       await this.symlinkAgentDirectoriesToRuntime('.mapping-runtime', [
-        { source: 'skills', target: 'instructions' },
+        { source: 'prompts', target: 'instructions' },
         { source: 'prompts' },
       ]);
     }
@@ -236,6 +196,7 @@ test('runtime directory mappings support custom targets and same-name fallback',
 
   await withTemporaryWorkingDirectory(async (temporaryWorkingDirectory) => {
     await mkdir(join(temporaryWorkingDirectory, '.agents', 'prompts', 'general'), { recursive: true });
+    await writeFile(join(temporaryWorkingDirectory, '.agents', 'prompts', 'spec-new.md'), '# Spec New', 'utf8');
     await writeFile(
       join(temporaryWorkingDirectory, '.agents', 'prompts', 'general', 'system.md'),
       '# Prompt',
@@ -244,13 +205,13 @@ test('runtime directory mappings support custom targets and same-name fallback',
 
     await runtime.install();
 
-    const customTargetSymlinkPath = join(temporaryWorkingDirectory, '.mapping-runtime', 'instructions', 'spec-new');
+    const customTargetSymlinkPath = join(temporaryWorkingDirectory, '.mapping-runtime', 'instructions', 'spec-new.md');
     const customTargetSymlinkStats = await lstat(customTargetSymlinkPath);
     assert.equal(customTargetSymlinkStats.isSymbolicLink(), true);
 
     const customTargetSymlinkTarget = await readlink(customTargetSymlinkPath);
     assert.equal(isAbsolute(customTargetSymlinkTarget), false);
-    assert.equal(customTargetSymlinkTarget, join('..', '..', '.agents', 'skills', 'spec-new'));
+    assert.equal(customTargetSymlinkTarget, join('..', '..', '.agents', 'prompts', 'spec-new.md'));
 
     const fallbackTargetSymlinkPath = join(temporaryWorkingDirectory, '.mapping-runtime', 'prompts', 'general');
     const fallbackTargetSymlinkStats = await lstat(fallbackTargetSymlinkPath);

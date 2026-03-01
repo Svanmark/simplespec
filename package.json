@@ -9,7 +9,7 @@
   },
   "files": [
     "dist/bin/**",
-    "skills/**",
+    "commands/**",
     ".simplespec/**",
     "assets/simplespec-logo.txt",
     "README.md",
