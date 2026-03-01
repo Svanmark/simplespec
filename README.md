@@ -14,8 +14,8 @@
   <a href="https://www.npmjs.com/package/simplespec">
     <img src="https://img.shields.io/npm/dm/simplespec?logo=npm" alt="npm downloads" />
   </a>
-  <a href="https://github.com/Svanmark/simplespec/actions/workflows/ci.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/Svanmark/simplespec/ci.yml?branch=main&label=tests" alt="unit tests" />
+  <a href="https://github.com/Svanmark/simplespec/actions/workflows/tests.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/Svanmark/simplespec/tests.yml?branch=main&label=tests" alt="unit tests" />
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/github/license/Svanmark/simplespec" alt="license" />
