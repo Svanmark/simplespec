@@ -9,16 +9,16 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/simplespec">
-    <img src="https://img.shields.io/npm/v/simplespec?logo=npm" alt="npm version" />
+    <img src="https://img.shields.io/npm/v/simplespec?logo=npm&label=Version" alt="npm version" />
   </a>
   <a href="https://www.npmjs.com/package/simplespec">
-    <img src="https://img.shields.io/npm/dm/simplespec?logo=npm" alt="npm downloads" />
+    <img src="https://img.shields.io/npm/dm/simplespec?logo=npm&label=Downloads" alt="npm downloads" />
   </a>
   <a href="https://github.com/Svanmark/simplespec/actions/workflows/tests.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/Svanmark/simplespec/tests.yml?branch=main&label=tests" alt="unit tests" />
+    <img src="https://github.com/Svanmark/simplespec/actions/workflows/tests.yml/badge.svg?branch=main&label=Tests" alt="tests" />
   </a>
-  <a href="LICENSE">
-    <img src="https://img.shields.io/github/license/Svanmark/simplespec" alt="license" />
+  <a href="https://github.com/Svanmark/simplespec/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-blue?label=License" alt="License" />
   </a>
 </p>
 
