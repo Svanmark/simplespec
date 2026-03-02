@@ -1,7 +1,21 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { trackInstallSuccess } from '../bin/telemetry.ts';
+import {
+  isTelemetryEnabledFromEnv,
+  trackInstallSuccess,
+} from '../bin/telemetry.ts';
+
+test('isTelemetryEnabledFromEnv only enables telemetry when env is set to true', () => {
+  process.env.SIMPLESPEC_TELEMETRY_ENABLED = 'true';
+  assert.equal(isTelemetryEnabledFromEnv(), true);
+
+  process.env.SIMPLESPEC_TELEMETRY_ENABLED = 'false';
+  assert.equal(isTelemetryEnabledFromEnv(), false);
+
+  delete process.env.SIMPLESPEC_TELEMETRY_ENABLED;
+  assert.equal(isTelemetryEnabledFromEnv(), false);
+});
 
 test('trackInstallSuccess does not send events when API key is missing', async () => {
   await trackInstallSuccess({

@@ -6,7 +6,7 @@ import chalk from 'chalk';
 import Runtime from './runtimes/Runtime.ts';
 import { readFile } from 'node:fs/promises';
 import os from 'node:os';
-import { trackInstallSuccess } from './telemetry.ts';
+import { isTelemetryEnabledFromEnv, trackInstallSuccess } from './telemetry.ts';
 
 await loadRuntimes();
 
@@ -18,7 +18,7 @@ const context = {
   telemetryDisabled: false,
 };
 
-context.telemetryDisabled = process.argv.includes('--no-telemetry');
+context.telemetryDisabled = process.argv.includes('--no-telemetry') || !isTelemetryEnabledFromEnv();
 
 async function printAsciiLogo() {
   const logoPathCandidates = [

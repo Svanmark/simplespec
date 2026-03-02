@@ -22,6 +22,10 @@ type TrackInstallSuccessOptions = {
 const TELEMETRY_DIR_PATH = path.join(os.homedir(), '.simplespec');
 const TELEMETRY_DISTINCT_ID_PATH = path.join(TELEMETRY_DIR_PATH, 'telemetry-distinct-id');
 
+export function isTelemetryEnabledFromEnv(): boolean {
+  return process.env.SIMPLESPEC_TELEMETRY_ENABLED === 'true';
+}
+
 async function getOrCreatePersistentDistinctId(): Promise<string> {
   try {
     const existingDistinctId = (await readFile(TELEMETRY_DISTINCT_ID_PATH, 'utf8')).trim();

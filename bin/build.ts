@@ -57,4 +57,3 @@ async function runBuild(): Promise<void> {
 }
 
 await runBuild();
-
