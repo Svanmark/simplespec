@@ -5,13 +5,20 @@ import prompts from 'prompts';
 import chalk from 'chalk';
 import Runtime from './runtimes/Runtime.ts';
 import { readFile } from 'node:fs/promises';
+import os from 'node:os';
+import { isTelemetryEnabledFromEnv, trackInstallSuccess } from './telemetry.ts';
 
 await loadRuntimes();
+
+let version = 'unknown';
 
 const context = {
   runtimes: [],
   installMode: 'symlink' as 'symlink' | 'copy',
+  telemetryDisabled: false,
 };
+
+context.telemetryDisabled = process.argv.includes('--no-telemetry') || !isTelemetryEnabledFromEnv();
 
 async function printAsciiLogo() {
   const logoPathCandidates = [
@@ -39,8 +46,6 @@ async function printIntro() {
     new URL('../../package.json', import.meta.url),
     `${process.cwd()}/package.json`
   ];
-
-  let version = 'unknown';
 
   for (const pathCandidate of packageJsonPathCandidates) {
     try {
@@ -111,6 +116,19 @@ async function run() {
   await askRuntime();
   await askInstallMode();
   await installRuntimes();
+
+  const cliFlagsUsed = process.argv.slice(2).filter((arg) => arg.startsWith('--'));
+
+  void trackInstallSuccess({
+    version,
+    telemetryDisabled: context.telemetryDisabled,
+    installMode: context.installMode,
+    selectedRuntimes: context.runtimes,
+    cliFlagsUsed,
+    nodeVersion: process.version,
+    osPlatform: os.platform(),
+    osArch: os.arch(),
+  });
 }
 
 run();

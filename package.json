@@ -16,7 +16,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsx bin/build.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "clean": "rm -rf dist",
     "dev": "tsx bin/install.ts",
@@ -31,6 +31,7 @@
     "@eslint/js": "^9.39.3",
     "@types/node": "^22.13.10",
     "@types/prompts": "^2.4.9",
+    "esbuild": "^0.25.10",
     "eslint": "^9.39.3",
     "jiti": "^2.4.2",
     "tsx": "^4.19.2",
@@ -49,6 +50,8 @@
   "homepage": "https://github.com/Svanmark/simplespec#readme",
   "dependencies": {
     "chalk": "^5.6.2",
+    "dotenv": "^17.3.1",
+    "posthog-node": "^5.21.2",
     "prompts": "^2.4.2"
   }
 }

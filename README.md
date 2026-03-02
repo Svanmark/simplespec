@@ -72,6 +72,10 @@ Use this command to implement a spec. If the command is sent in the same context
 /spec-apply spec:<id>
 ```
 
+### Telemetry optout
+
+Pass `--no-telemetry` to disable telemetry for a run.
+
 ---
 
 ## Built for the AI era
