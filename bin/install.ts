@@ -5,6 +5,7 @@ import prompts from 'prompts';
 import chalk from 'chalk';
 import Runtime from './runtimes/Runtime.ts';
 import { readFile } from 'node:fs/promises';
+import os from 'node:os';
 import { trackInstallSuccess } from './telemetry.ts';
 
 await loadRuntimes();
@@ -18,6 +19,27 @@ const context = {
 };
 
 context.telemetryDisabled = process.argv.includes('--no-telemetry');
+
+function detectCountryFromLocale(): string | undefined {
+  const localeCandidate = process.env.LC_ALL ?? process.env.LC_MESSAGES ?? process.env.LANG;
+
+  if (!localeCandidate) {
+    return undefined;
+  }
+
+  const normalizedLocale = localeCandidate.split('.')[0]?.replace('_', '-');
+
+  if (!normalizedLocale) {
+    return undefined;
+  }
+
+  try {
+    const locale = new Intl.Locale(normalizedLocale);
+    return locale.region?.toUpperCase();
+  } catch {
+    return undefined;
+  }
+}
 
 async function printAsciiLogo() {
   const logoPathCandidates = [
@@ -116,9 +138,18 @@ async function run() {
   await askInstallMode();
   await installRuntimes();
 
+  const cliFlagsUsed = process.argv.slice(2).filter((arg) => arg.startsWith('--'));
+
   void trackInstallSuccess({
     version,
     telemetryDisabled: context.telemetryDisabled,
+    installMode: context.installMode,
+    selectedRuntimes: context.runtimes,
+    cliFlagsUsed,
+    nodeVersion: process.version,
+    osPlatform: os.platform(),
+    osArch: os.arch(),
+    country: detectCountryFromLocale(),
   });
 }
 
