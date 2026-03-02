@@ -5,3 +5,5 @@ dist/
 benchmarks/runs/*
 
 .DS_Store
+.env
+.env.build
