@@ -20,27 +20,6 @@ const context = {
 
 context.telemetryDisabled = process.argv.includes('--no-telemetry');
 
-function detectCountryFromLocale(): string | undefined {
-  const localeCandidate = process.env.LC_ALL ?? process.env.LC_MESSAGES ?? process.env.LANG;
-
-  if (!localeCandidate) {
-    return undefined;
-  }
-
-  const normalizedLocale = localeCandidate.split('.')[0]?.replace('_', '-');
-
-  if (!normalizedLocale) {
-    return undefined;
-  }
-
-  try {
-    const locale = new Intl.Locale(normalizedLocale);
-    return locale.region?.toUpperCase();
-  } catch {
-    return undefined;
-  }
-}
-
 async function printAsciiLogo() {
   const logoPathCandidates = [
     new URL('../assets/simplespec-logo.txt', import.meta.url),
@@ -149,7 +128,6 @@ async function run() {
     nodeVersion: process.version,
     osPlatform: os.platform(),
     osArch: os.arch(),
-    country: detectCountryFromLocale(),
   });
 }
 

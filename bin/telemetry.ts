@@ -17,7 +17,6 @@ type TrackInstallSuccessOptions = {
   nodeVersion?: string;
   osPlatform?: NodeJS.Platform;
   osArch?: string;
-  country?: string;
 };
 
 const TELEMETRY_DIR_PATH = path.join(os.homedir(), '.simplespec');
@@ -75,7 +74,6 @@ export async function trackInstallSuccess(options: TrackInstallSuccessOptions): 
         nodeVersion: options.nodeVersion,
         osPlatform: options.osPlatform,
         osArch: options.osArch,
-        country: options.country,
       },
     });
 
