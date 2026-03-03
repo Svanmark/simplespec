@@ -6,14 +6,14 @@ import {
   trackInstallSuccess,
 } from '../bin/telemetry.ts';
 
-test('isTelemetryEnabledFromEnv only enables telemetry when env is set to true', () => {
+test('isTelemetryEnabledFromEnv enables telemetry by default and when env is true', () => {
+  delete process.env.SIMPLESPEC_TELEMETRY_ENABLED;
+  assert.equal(isTelemetryEnabledFromEnv(), true);
+
   process.env.SIMPLESPEC_TELEMETRY_ENABLED = 'true';
   assert.equal(isTelemetryEnabledFromEnv(), true);
 
   process.env.SIMPLESPEC_TELEMETRY_ENABLED = 'false';
-  assert.equal(isTelemetryEnabledFromEnv(), false);
-
-  delete process.env.SIMPLESPEC_TELEMETRY_ENABLED;
   assert.equal(isTelemetryEnabledFromEnv(), false);
 });
 

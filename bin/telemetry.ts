@@ -24,7 +24,13 @@ const TELEMETRY_DIR_PATH = path.join(os.homedir(), '.simplespec');
 const TELEMETRY_DISTINCT_ID_PATH = path.join(TELEMETRY_DIR_PATH, 'telemetry-distinct-id');
 
 export function isTelemetryEnabledFromEnv(): boolean {
-  return process.env.SIMPLESPEC_TELEMETRY_ENABLED === 'true';
+  const value = process.env.SIMPLESPEC_TELEMETRY_ENABLED;
+
+  if (value === undefined) {
+    return true;
+  }
+
+  return value === 'true';
 }
 
 async function getOrCreatePersistentDistinctId(): Promise<string> {

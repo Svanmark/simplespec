@@ -28,7 +28,7 @@ async function collectTypeScriptEntryPoints(directoryPath: string): Promise<stri
 }
 
 async function runBuild(): Promise<void> {
-  const envLoadResult = dotenv.config({ path: BUILD_ENV_FILE });
+  const envLoadResult = dotenv.config({ path: BUILD_ENV_FILE, override: true });
 
   if (envLoadResult.error) {
     console.warn('No .env.build file found. Using safe placeholder telemetry key.');
@@ -36,6 +36,7 @@ async function runBuild(): Promise<void> {
 
   const posthogProjectApiKey = process.env.POSTHOG_PROJECT_API_KEY ?? 'phc_REPLACE_ME';
   const posthogHost = process.env.POSTHOG_HOST ?? 'https://eu.i.posthog.com';
+  const telemetryEnabled = process.env.SIMPLESPEC_TELEMETRY_ENABLED ?? 'true';
 
   const entryPoints = await collectTypeScriptEntryPoints(BIN_DIRECTORY);
   const relativeEntryPoints = entryPoints.map((entryPoint) => relative(resolve('.'), entryPoint));
@@ -52,6 +53,7 @@ async function runBuild(): Promise<void> {
     define: {
       'process.env.POSTHOG_PROJECT_API_KEY': JSON.stringify(posthogProjectApiKey),
       'process.env.POSTHOG_HOST': JSON.stringify(posthogHost),
+      'process.env.SIMPLESPEC_TELEMETRY_ENABLED': JSON.stringify(telemetryEnabled),
     },
   });
 }
