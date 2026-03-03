@@ -1,4 +1,4 @@
-import Runtime from './Runtime.ts';
+import Runtime from './Runtime.js';
 
 class Codex extends Runtime {
   async install(): Promise<void> {

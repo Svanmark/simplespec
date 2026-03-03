@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-import { loadRuntimes } from './runtimes/index.ts';
+import { loadRuntimes } from './runtimes/index.js';
 import prompts from 'prompts';
 import chalk from 'chalk';
-import Runtime from './runtimes/Runtime.ts';
+import Runtime from './runtimes/Runtime.js';
 import { readFile } from 'node:fs/promises';
 import os from 'node:os';
-import { isTelemetryEnabledFromEnv, trackInstallSuccess } from './telemetry.ts';
+import { isTelemetryEnabledFromEnv, trackInstallSuccess } from './telemetry.js';
 
 await loadRuntimes();
 

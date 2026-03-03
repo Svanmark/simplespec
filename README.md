@@ -47,6 +47,21 @@ npx simplespec@latest
 
 That’s it. Follow the guided flow and start building with clearer direction.
 
+### Test the packaged dist artifact locally
+
+Use this before publishing to ensure the same tarball users get from npm works end-to-end.
+
+```bash
+npm run dist:test
+```
+
+This will:
+- run [`npm run prepack`](package.json:28)
+- create a temporary sandbox outside the repository
+- build and pack the artifact in the sandbox
+- install that tarball in a dedicated smoke project
+- run `npx simplespec --help` as a smoke test
+
 ---
 
 ## How to use

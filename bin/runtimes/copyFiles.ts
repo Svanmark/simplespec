@@ -1,7 +1,7 @@
 import { copyFile, mkdir, readdir } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 
-import type { RuntimeDirectorySymlinkMapping } from './runtimeDirectoryMapping.ts';
+import type { RuntimeDirectorySymlinkMapping } from './runtimeDirectoryMapping.js';
 
 function getInstallationDirectory(): string {
   const currentWorkingDirectory = process.cwd();

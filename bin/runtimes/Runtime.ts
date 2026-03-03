@@ -3,9 +3,9 @@ import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   symlinkDirectoriesFromAgentsToRuntime,
-} from './symlinkDirectories.ts';
-import { copyDirectoriesFromAgentsToRuntime } from './copyFiles.ts';
-import type { RuntimeDirectorySymlinkMapping } from './runtimeDirectoryMapping.ts';
+} from './symlinkDirectories.js';
+import { copyDirectoriesFromAgentsToRuntime } from './copyFiles.js';
+import type { RuntimeDirectorySymlinkMapping } from './runtimeDirectoryMapping.js';
 
 const runtimes: Record<string, RuntimeInstance> = {};
 const registeredRuntimes: Record<string, RegisteredRuntime> = {};

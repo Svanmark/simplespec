@@ -21,6 +21,7 @@
     "clean": "rm -rf dist",
     "dev": "tsx bin/install.ts",
     "install:run": "npm run build && node dist/bin/install.js",
+    "dist:test": "tsx bin/dist-test.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "node --import tsx --test \"tests/**/*.test.ts\"",
