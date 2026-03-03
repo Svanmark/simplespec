@@ -16,9 +16,11 @@ const context = {
   runtimes: [],
   installMode: 'symlink' as 'symlink' | 'copy',
   telemetryDisabled: false,
+  verbose: false,
 };
 
 context.telemetryDisabled = process.argv.includes('--no-telemetry') || !isTelemetryEnabledFromEnv();
+context.verbose = process.argv.includes('--verbose') || process.argv.includes('-v');
 
 async function printAsciiLogo() {
   const logoPathCandidates = [
@@ -103,6 +105,11 @@ async function askInstallMode() {
 
 async function installRuntimes() {
   Runtime.configureInstallMode(context.installMode);
+  Runtime.configureVerboseLogging(context.verbose);
+
+  if (context.verbose) {
+    console.log('[verbose] Verbose install logging enabled');
+  }
 
   for (const runtime of context.runtimes) {
     const runtimeInstance = Runtime.getRuntime(runtime);
@@ -122,6 +129,7 @@ async function run() {
   void trackInstallSuccess({
     version,
     telemetryDisabled: context.telemetryDisabled,
+    verbose: context.verbose,
     installMode: context.installMode,
     selectedRuntimes: context.runtimes,
     cliFlagsUsed,

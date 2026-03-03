@@ -91,6 +91,10 @@ Use this command to implement a spec. If the command is sent in the same context
 
 Pass `--no-telemetry` to disable telemetry for a run.
 
+### Verbose installer logs
+
+Pass `--verbose` (or `-v`) to print detailed installer progress, including directory mappings and file-level copy/symlink operations.
+
 ---
 
 ## Built for the AI era

@@ -66,7 +66,7 @@ async function runDistTest(): Promise<void> {
 
   await writeFile(join(smokeRoot, 'package.json'), `${JSON.stringify(smokePackageJson, null, 2)}\n`, 'utf8');
   await run('npm', ['install', '--no-fund', '--no-audit', tarballPath], smokeRoot);
-  await run('npx', ['simplespec', '--help'], smokeRoot);
+  await run('npx', ['simplespec', '--verbose', '--help'], smokeRoot);
 
   process.stdout.write(`[dist-test] ✅ Success. Sandbox retained at ${tempRoot}\n`);
 }

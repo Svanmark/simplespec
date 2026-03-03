@@ -2,6 +2,7 @@ import { copyFile, mkdir, readdir } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 
 import type { RuntimeDirectorySymlinkMapping } from './runtimeDirectoryMapping.js';
+import Runtime from './Runtime.js';
 
 function getInstallationDirectory(): string {
   const currentWorkingDirectory = process.cwd();
@@ -33,6 +34,10 @@ async function copyDirectoriesFromAgentsToRuntime(
     const sourceDirectory = join(installationDirectory, '.agents', sourceDirectoryName);
     const targetDirectory = join(installationDirectory, runtimeDirectory, targetDirectoryName);
 
+    if (Runtime.isVerboseLoggingEnabled()) {
+      console.log(`[verbose] Copy mapping ${sourceDirectory} -> ${targetDirectory}`);
+    }
+
     await mkdir(targetDirectory, { recursive: true });
 
     const copyEntries = async (sourcePath: string, targetPath: string): Promise<void> => {
@@ -50,6 +55,9 @@ async function copyDirectoriesFromAgentsToRuntime(
 
         await mkdir(dirname(targetEntryPath), { recursive: true });
         await copyFile(sourceEntryPath, targetEntryPath);
+        if (Runtime.isVerboseLoggingEnabled()) {
+          console.log(`[verbose] Copied file ${sourceEntryPath} -> ${targetEntryPath}`);
+        }
       }
     };
 

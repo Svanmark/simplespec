@@ -118,6 +118,7 @@ class Runtime {
   runtime: string;
   private static globalInstallCompleted = false;
   private static installMode: RuntimeInstallMode = 'symlink';
+  private static verboseLogging = false;
 
   constructor(runtime: string) {
     if (new.target === Runtime) {
@@ -129,12 +130,21 @@ class Runtime {
 
   async install(): Promise<void> {
     if (Runtime.globalInstallCompleted) {
+      if (Runtime.verboseLogging) {
+        console.log('[verbose] Global runtime setup already completed, skipping shared install');
+      }
       return;
     }
 
     console.log('Installing global runtime...');
+    if (Runtime.verboseLogging) {
+      console.log('[verbose] Installing shared framework directories (.agents, .simplespec)');
+    }
     await installFrameworkBaseDirectories();
     Runtime.globalInstallCompleted = true;
+    if (Runtime.verboseLogging) {
+      console.log('[verbose] Shared framework directory installation complete');
+    }
   }
 
   uninstall(): void {
@@ -149,6 +159,12 @@ class Runtime {
     runtimeDirectory: string,
     mappings: RuntimeDirectorySymlinkMapping[],
   ): Promise<void> {
+    if (Runtime.verboseLogging) {
+      console.log(
+        `[verbose] Installing runtime directory mappings for ${runtimeDirectory} using ${Runtime.installMode} mode`,
+      );
+    }
+
     if (Runtime.installMode === 'copy') {
       await copyDirectoriesFromAgentsToRuntime(runtimeDirectory, mappings);
       return;
@@ -159,6 +175,14 @@ class Runtime {
 
   static configureInstallMode(mode: RuntimeInstallMode): void {
     Runtime.installMode = mode;
+  }
+
+  static configureVerboseLogging(enabled: boolean): void {
+    Runtime.verboseLogging = enabled;
+  }
+
+  static isVerboseLoggingEnabled(): boolean {
+    return Runtime.verboseLogging;
   }
 
   static registerRuntime(

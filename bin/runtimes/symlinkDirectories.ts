@@ -2,6 +2,7 @@ import { lstat, mkdir, readdir, rm, symlink } from 'node:fs/promises';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 
 import type { RuntimeDirectorySymlinkMapping } from './runtimeDirectoryMapping.js';
+import Runtime from './Runtime.js';
 
 function getInstallationDirectory(): string {
   const currentWorkingDirectory = process.cwd();
@@ -33,6 +34,10 @@ async function symlinkDirectoriesFromAgentsToRuntime(
     const sourceDirectory = join(installationDirectory, '.agents', sourceDirectoryName);
     const targetDirectory = join(installationDirectory, runtimeDirectory, targetDirectoryName);
 
+    if (Runtime.isVerboseLoggingEnabled()) {
+      console.log(`[verbose] Symlink mapping ${sourceDirectory} -> ${targetDirectory}`);
+    }
+
     if (mapping.linkMode === 'directory') {
       await mkdir(dirname(targetDirectory), { recursive: true });
 
@@ -50,6 +55,9 @@ async function symlinkDirectoriesFromAgentsToRuntime(
       }
 
       await symlink(relativeSourceDirectoryPath, targetDirectory, 'dir');
+      if (Runtime.isVerboseLoggingEnabled()) {
+        console.log(`[verbose] Linked directory ${targetDirectory} -> ${relativeSourceDirectoryPath}`);
+      }
       continue;
     }
 
@@ -76,6 +84,9 @@ async function symlinkDirectoriesFromAgentsToRuntime(
 
       const symlinkType = entry.isDirectory() ? 'dir' : 'file';
       await symlink(relativeSourceEntryPath, targetEntryPath, symlinkType);
+      if (Runtime.isVerboseLoggingEnabled()) {
+        console.log(`[verbose] Linked ${targetEntryPath} -> ${relativeSourceEntryPath}`);
+      }
     }
   }
 }

@@ -11,6 +11,7 @@ type TrackInstallSuccessOptions = {
   version: string;
   distinctId?: string;
   telemetryDisabled?: boolean;
+  verbose?: boolean;
   installMode?: 'symlink' | 'copy';
   selectedRuntimes?: string[];
   cliFlagsUsed?: string[];
@@ -50,6 +51,9 @@ async function getOrCreatePersistentDistinctId(): Promise<string> {
 
 export async function trackInstallSuccess(options: TrackInstallSuccessOptions): Promise<void> {
   if (options.telemetryDisabled) {
+    if (options.verbose) {
+      console.log('[verbose] Telemetry disabled for this run');
+    }
     return;
   }
 
@@ -57,6 +61,9 @@ export async function trackInstallSuccess(options: TrackInstallSuccessOptions): 
   const posthogHost = process.env.POSTHOG_HOST ?? 'https://eu.i.posthog.com';
 
   if (!posthogProjectApiKey || posthogProjectApiKey === '<insert key>') {
+    if (options.verbose) {
+      console.log('[verbose] Telemetry skipped: POSTHOG_PROJECT_API_KEY is not configured');
+    }
     return;
   }
 
@@ -66,6 +73,10 @@ export async function trackInstallSuccess(options: TrackInstallSuccessOptions): 
     const client = new PostHog(posthogProjectApiKey, {
       host: posthogHost,
     });
+
+    if (options.verbose) {
+      console.log(`[verbose] Sending telemetry event install_success to ${posthogHost}`);
+    }
 
     client.capture({
       distinctId,
@@ -82,7 +93,14 @@ export async function trackInstallSuccess(options: TrackInstallSuccessOptions): 
     });
 
     await client.shutdown();
+
+    if (options.verbose) {
+      console.log('[verbose] Telemetry event sent successfully');
+    }
   } catch {
+    if (options.verbose) {
+      console.log('[verbose] Telemetry failed, continuing install without telemetry');
+    }
     // Telemetry should never break CLI installs.
   }
 }
