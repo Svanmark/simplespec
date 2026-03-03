@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { lstat, mkdir, mkdtemp, readFile, readlink, rm, writeFile } from 'node:fs/promises';
+import { access, lstat, mkdir, mkdtemp, readFile, readlink, rm, writeFile } from 'node:fs/promises';
 import { isAbsolute, join } from 'node:path';
 import { tmpdir } from 'node:os';
 
@@ -221,5 +221,24 @@ test('runtime directory mappings support custom targets and same-name fallback',
     const fallbackTargetSymlinkTarget = await readlink(fallbackTargetSymlinkPath);
     assert.equal(isAbsolute(fallbackTargetSymlinkTarget), false);
     assert.equal(fallbackTargetSymlinkTarget, join('..', '..', '.agents', 'prompts', 'general'));
+  });
+});
+
+test('global-only install creates framework directories without runtime-specific directories', async () => {
+  (Runtime as unknown as { globalInstallCompleted: boolean }).globalInstallCompleted = false;
+
+  await withTemporaryWorkingDirectory(async (temporaryWorkingDirectory) => {
+    await Runtime.installGlobalFrameworkOnly();
+
+    await access(join(temporaryWorkingDirectory, '.agents', 'prompts', 'spec-new.md'));
+    await access(join(temporaryWorkingDirectory, '.simplespec', 'examples', 'example-spec.md'));
+
+    await assert.rejects(async () => {
+      await access(join(temporaryWorkingDirectory, '.codex'));
+    });
+
+    await assert.rejects(async () => {
+      await access(join(temporaryWorkingDirectory, '.kilocode'));
+    });
   });
 });

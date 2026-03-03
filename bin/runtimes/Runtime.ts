@@ -128,7 +128,7 @@ class Runtime {
     this.runtime = runtime;
   }
 
-  async install(): Promise<void> {
+  private static async installGlobalRuntimeIfNeeded(): Promise<void> {
     if (Runtime.globalInstallCompleted) {
       if (Runtime.verboseLogging) {
         console.log('[verbose] Global runtime setup already completed, skipping shared install');
@@ -145,6 +145,10 @@ class Runtime {
     if (Runtime.verboseLogging) {
       console.log('[verbose] Shared framework directory installation complete');
     }
+  }
+
+  async install(): Promise<void> {
+    await Runtime.installGlobalRuntimeIfNeeded();
   }
 
   uninstall(): void {
@@ -183,6 +187,10 @@ class Runtime {
 
   static isVerboseLoggingEnabled(): boolean {
     return Runtime.verboseLogging;
+  }
+
+  static async installGlobalFrameworkOnly(): Promise<void> {
+    await Runtime.installGlobalRuntimeIfNeeded();
   }
 
   static registerRuntime(

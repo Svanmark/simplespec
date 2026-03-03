@@ -7,13 +7,14 @@ import Runtime from './runtimes/Runtime.js';
 import { readFile } from 'node:fs/promises';
 import os from 'node:os';
 import { isTelemetryEnabledFromEnv, trackInstallSuccess } from './telemetry.js';
+import { resolveInstallModeSelection, resolveRuntimeSelection } from './installPromptState.js';
 
 await loadRuntimes();
 
 let version = 'unknown';
 
 const context = {
-  runtimes: [],
+  runtimes: [] as string[],
   installMode: 'symlink' as 'symlink' | 'copy',
   telemetryDisabled: false,
   verbose: false,
@@ -69,7 +70,7 @@ async function askRuntime() {
   const response = await prompts({
     type: 'multiselect',
     name: 'runtimes',
-    instructions: 'Use space to select, enter to confirm',
+    instructions: 'Use space to select, enter to confirm (shared .agents is always installed)',
     message: 'Select runtimes to support',
     choices: Runtime.listAvailableRuntimes().map(({ runtime, name }) => ({
       title: name,
@@ -77,9 +78,10 @@ async function askRuntime() {
     })),
   });
 
-  context.runtimes = response.runtimes;
+  const normalizedRuntimeSelection = resolveRuntimeSelection(response);
+  context.runtimes = normalizedRuntimeSelection.runtimes;
 
-  return response;
+  return normalizedRuntimeSelection;
 }
 
 async function askInstallMode() {
@@ -100,7 +102,10 @@ async function askInstallMode() {
     initial: 0,
   });
 
-  context.installMode = response.installMode;
+  const normalizedInstallModeSelection = resolveInstallModeSelection(response, context.installMode);
+  context.installMode = normalizedInstallModeSelection.installMode;
+
+  return normalizedInstallModeSelection;
 }
 
 async function installRuntimes() {
@@ -109,6 +114,11 @@ async function installRuntimes() {
 
   if (context.verbose) {
     console.log('[verbose] Verbose install logging enabled');
+  }
+
+  if (context.runtimes.length === 0) {
+    await Runtime.installGlobalFrameworkOnly();
+    return;
   }
 
   for (const runtime of context.runtimes) {
@@ -120,8 +130,21 @@ async function installRuntimes() {
 async function run() {
   await printAsciiLogo();
   await printIntro();
-  await askRuntime();
-  await askInstallMode();
+
+  const runtimePromptResult = await askRuntime();
+
+  if (runtimePromptResult.cancelled) {
+    console.log(chalk.yellow('Installation cancelled before selecting runtimes.'));
+    return;
+  }
+
+  const installModePromptResult = await askInstallMode();
+
+  if (installModePromptResult.cancelled) {
+    console.log(chalk.yellow('Installation cancelled before selecting install mode.'));
+    return;
+  }
+
   await installRuntimes();
 
   const cliFlagsUsed = process.argv.slice(2).filter((arg) => arg.startsWith('--'));
