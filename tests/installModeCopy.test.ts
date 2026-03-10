@@ -21,7 +21,7 @@ async function withTemporaryWorkingDirectory(run: (temporaryWorkingDirectory: st
   }
 }
 
-test('copy install mode copies codex prompts as regular files', async () => {
+test('copy install mode copies codex skills as regular files', async () => {
   await loadRuntimes();
   (Runtime as unknown as { globalInstallCompleted: boolean }).globalInstallCompleted = false;
   Runtime.configureInstallMode('copy');
@@ -31,15 +31,23 @@ test('copy install mode copies codex prompts as regular files', async () => {
   await withTemporaryWorkingDirectory(async (temporaryWorkingDirectory) => {
     await codexRuntime.install();
 
-    const promptPath = join(temporaryWorkingDirectory, '.codex', 'prompts', 'spec-new.md');
-    const promptStats = await lstat(promptPath);
+    const specNewSkillPath = join(temporaryWorkingDirectory, '.codex', 'skills', 'spec-new', 'SKILL.md');
+    const specApplySkillPath = join(temporaryWorkingDirectory, '.codex', 'skills', 'spec-apply', 'SKILL.md');
+    const specNewSkillStats = await lstat(specNewSkillPath);
+    const specApplySkillStats = await lstat(specApplySkillPath);
 
-    assert.equal(promptStats.isFile(), true);
-    assert.equal(promptStats.isSymbolicLink(), false);
+    assert.equal(specNewSkillStats.isFile(), true);
+    assert.equal(specNewSkillStats.isSymbolicLink(), false);
+    assert.equal(specApplySkillStats.isFile(), true);
+    assert.equal(specApplySkillStats.isSymbolicLink(), false);
 
-    const copiedPrompt = await readFile(promptPath, 'utf8');
-    const sourcePrompt = await readFile(join(temporaryWorkingDirectory, '.agents', 'prompts', 'spec-new.md'), 'utf8');
-    assert.equal(copiedPrompt, sourcePrompt);
+    const copiedSpecNewSkill = await readFile(specNewSkillPath, 'utf8');
+    const sourceSpecNewPrompt = await readFile(join(temporaryWorkingDirectory, '.agents', 'prompts', 'spec-new.md'), 'utf8');
+    assert.equal(copiedSpecNewSkill, sourceSpecNewPrompt);
+
+    const copiedSpecApplySkill = await readFile(specApplySkillPath, 'utf8');
+    const sourceSpecApplyPrompt = await readFile(join(temporaryWorkingDirectory, '.agents', 'prompts', 'spec-apply.md'), 'utf8');
+    assert.equal(copiedSpecApplySkill, sourceSpecApplyPrompt);
   });
 });
 

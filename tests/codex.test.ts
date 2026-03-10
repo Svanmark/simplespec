@@ -21,7 +21,7 @@ async function withTemporaryWorkingDirectory(run: (temporaryWorkingDirectory: st
   }
 }
 
-test('codex install symlinks each .agents/prompts entry into .codex/prompts', async () => {
+test('codex install symlinks spec skills into .codex/skills', async () => {
   await loadRuntimes();
   (Runtime as unknown as { globalInstallCompleted: boolean }).globalInstallCompleted = false;
   Runtime.configureInstallMode('symlink');
@@ -31,13 +31,20 @@ test('codex install symlinks each .agents/prompts entry into .codex/prompts', as
   await withTemporaryWorkingDirectory(async (temporaryWorkingDirectory) => {
     await codexRuntime.install();
 
-    const symlinkPath = join(temporaryWorkingDirectory, '.codex', 'prompts', 'spec-new.md');
-    const symlinkStats = await lstat(symlinkPath);
+    const specNewSkillPath = join(temporaryWorkingDirectory, '.codex', 'skills', 'spec-new', 'SKILL.md');
+    const specApplySkillPath = join(temporaryWorkingDirectory, '.codex', 'skills', 'spec-apply', 'SKILL.md');
+    const specNewSkillStats = await lstat(specNewSkillPath);
+    const specApplySkillStats = await lstat(specApplySkillPath);
 
-    assert.equal(symlinkStats.isSymbolicLink(), true);
+    assert.equal(specNewSkillStats.isSymbolicLink(), true);
+    assert.equal(specApplySkillStats.isSymbolicLink(), true);
 
-    const symlinkTarget = await readlink(symlinkPath);
-    assert.equal(isAbsolute(symlinkTarget), false);
-    assert.equal(symlinkTarget, join('..', '..', '.agents', 'prompts', 'spec-new.md'));
+    const specNewSkillTarget = await readlink(specNewSkillPath);
+    assert.equal(isAbsolute(specNewSkillTarget), false);
+    assert.equal(specNewSkillTarget, join('..', '..', '..', '.agents', 'prompts', 'spec-new.md'));
+
+    const specApplySkillTarget = await readlink(specApplySkillPath);
+    assert.equal(isAbsolute(specApplySkillTarget), false);
+    assert.equal(specApplySkillTarget, join('..', '..', '..', '.agents', 'prompts', 'spec-apply.md'));
   });
 });

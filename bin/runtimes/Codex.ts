@@ -6,7 +6,20 @@ class Codex extends Runtime {
 
     console.log('Installing Codex runtime...')
 
-    await this.symlinkAgentDirectoriesToRuntime('.codex', [{ source: 'prompts' }]);
+    await this.symlinkAgentDirectoriesToRuntime('.codex', [
+      {
+        source: 'prompts',
+        sourceEntry: 'spec-apply.md',
+        target: 'skills/spec-apply',
+        targetEntry: 'SKILL.md',
+      },
+      {
+        source: 'prompts',
+        sourceEntry: 'spec-new.md',
+        target: 'skills/spec-new',
+        targetEntry: 'SKILL.md',
+      },
+    ]);
 
     // Codex runtime-specific install behavior goes here.
   }

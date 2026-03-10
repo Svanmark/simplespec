@@ -34,6 +34,37 @@ async function symlinkDirectoriesFromAgentsToRuntime(
     const sourceDirectory = join(installationDirectory, '.agents', sourceDirectoryName);
     const targetDirectory = join(installationDirectory, runtimeDirectory, targetDirectoryName);
 
+    if (mapping.sourceEntry) {
+      const sourceEntryPath = join(sourceDirectory, mapping.sourceEntry);
+      const targetEntryPath = join(targetDirectory, mapping.targetEntry ?? mapping.sourceEntry);
+
+      if (Runtime.isVerboseLoggingEnabled()) {
+        console.log(`[verbose] Symlink entry mapping ${sourceEntryPath} -> ${targetEntryPath}`);
+      }
+
+      await mkdir(dirname(targetEntryPath), { recursive: true });
+
+      try {
+        await lstat(targetEntryPath);
+        await rm(targetEntryPath, { recursive: true, force: true });
+      } catch {
+        // Target does not exist yet.
+      }
+
+      const relativeSourceEntryPath = relative(dirname(targetEntryPath), sourceEntryPath);
+
+      if (isAbsolute(relativeSourceEntryPath)) {
+        throw new Error(`Expected relative symlink target, but got: ${relativeSourceEntryPath}`);
+      }
+
+      await symlink(relativeSourceEntryPath, targetEntryPath, 'file');
+      if (Runtime.isVerboseLoggingEnabled()) {
+        console.log(`[verbose] Linked ${targetEntryPath} -> ${relativeSourceEntryPath}`);
+      }
+
+      continue;
+    }
+
     if (Runtime.isVerboseLoggingEnabled()) {
       console.log(`[verbose] Symlink mapping ${sourceDirectory} -> ${targetDirectory}`);
     }

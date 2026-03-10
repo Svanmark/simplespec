@@ -34,6 +34,23 @@ async function copyDirectoriesFromAgentsToRuntime(
     const sourceDirectory = join(installationDirectory, '.agents', sourceDirectoryName);
     const targetDirectory = join(installationDirectory, runtimeDirectory, targetDirectoryName);
 
+    if (mapping.sourceEntry) {
+      const sourceEntryPath = join(sourceDirectory, mapping.sourceEntry);
+      const targetEntryPath = join(targetDirectory, mapping.targetEntry ?? mapping.sourceEntry);
+
+      if (Runtime.isVerboseLoggingEnabled()) {
+        console.log(`[verbose] Copy entry mapping ${sourceEntryPath} -> ${targetEntryPath}`);
+      }
+
+      await mkdir(dirname(targetEntryPath), { recursive: true });
+      await copyFile(sourceEntryPath, targetEntryPath);
+      if (Runtime.isVerboseLoggingEnabled()) {
+        console.log(`[verbose] Copied file ${sourceEntryPath} -> ${targetEntryPath}`);
+      }
+
+      continue;
+    }
+
     if (Runtime.isVerboseLoggingEnabled()) {
       console.log(`[verbose] Copy mapping ${sourceDirectory} -> ${targetDirectory}`);
     }
