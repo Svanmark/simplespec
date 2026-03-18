@@ -78,6 +78,7 @@ Input can be either of:
    - Summarize implemented items mapped to acceptance criteria.
    - List tests/checks executed and outcomes.
    - Document any follow-up items explicitly marked out-of-scope or blocked.
+   - Mark completed tasks as completed in the spec document.
 
 ## Guardrails
 
